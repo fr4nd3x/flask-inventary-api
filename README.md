@@ -27,8 +27,26 @@ pipenv shell
 pipenv 
 flask --app main run
 
+
+conexion bd 
+
+
+pip freeze > requirements.txt
+ waitress-serve 
+
+
+
+
 pip install mysql-connector-python 
 
 pip install flask-sqlalchemy 
 
 pip freeze > requirements.txt
+
+pip uninstall mysql-connector-python 
+
+
+bd browser for sql lite 
+
+
+

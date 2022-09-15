@@ -1,6 +1,6 @@
 from concurrent.futures.process import _threads_wakeups
 #from crypt import methods
-#from pydoc import render_doc
+from pydoc import render_doc
 #flask --app main runfrom urllib import request
 from app import app
 from flask import request, jsonify,url_for
