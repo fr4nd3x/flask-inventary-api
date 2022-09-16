@@ -1,1 +1,1 @@
-web: gunicorn wsqi:app
+web: waitress-serve wsqi:app
