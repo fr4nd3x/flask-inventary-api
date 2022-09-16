@@ -19,7 +19,6 @@ touch app/routes.py
     from app import app
 
 
-
 172.16.1.1
 --global http.proxy 172.16.1.1:port  
 
@@ -74,3 +73,7 @@ git add .
 git commit -am "Hello Meduim App"
 
 $ heroku git:remote -a <your-heroku-application-name>
+
+
+when raise "Your Pipfile.lock is out of date. Expected"
+-> pipenv lock
