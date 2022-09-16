@@ -69,11 +69,19 @@ heroku git:remote https://inv2022.herokuapp.com/ | https://git.heroku.com/inv202
 heroku git:remote https://git.heroku.com/inv2022.git
 
 heroku git:remote inv2022
+
+
 git add .
 git commit -am "Hello Meduim App"
+git push heroku main
 
 $ heroku git:remote -a <your-heroku-application-name>
 
 
 when raise "Your Pipfile.lock is out of date. Expected"
 -> pipenv lock
+
+Delete Pipfile.lock
+
+Install all dependences with pipenv (No run shell!)
+
