@@ -41,12 +41,21 @@ pip install mysql-connector-python
 
 pip install flask-sqlalchemy 
 
+
+pip freeze
 pip freeze > requirements.txt
 
+
+vi Procfile
 pip uninstall mysql-connector-python 
 
 
 bd browser for sql lite 
 
 
+// install heroku for windows
 
+login heroku 
+login heroku-i
+
+direccion:172.16.1.1 - puerto :3128

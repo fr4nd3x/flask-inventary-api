@@ -41,7 +41,7 @@ class Movement(db.Model):
 class Move_detail (db.Model):
     #id = db.Column(db.Integer(), unique=True, nullable=False)
     id = db.Column(db.Integer(), primary_key=True)
-    code_patrimonial= db.Column(db.Integer(), nullable=Falses)
+    code_patrimonial= db.Column(db.Integer(), nullable=False)
     denomination= db.Column(db.String(30), unique=True, nullable=False)
     maraca = db.Column(db.String(10), unique=True, nullable=False)
     model = db.Column(db.String(20 ), unique=True, nullable=False)
@@ -55,6 +55,8 @@ class Move_detail (db.Model):
     def _repr_(self):
         return f'< move_detail {self.id}>'
 
+property_names=[p for p in dir(Movement) if isinstance(getattr(Movement,p),property)]
+print( property_names)
 db.create_all()
 db.session.commit()
 
@@ -67,10 +69,17 @@ def index():
 @app.route('/in',methods=['POST'])
 def in_post():
     o=request.json
-    movement=Movement(fullname = o['fullname'])
+    movement=Movement(
+            fullname = o['fullname']
+            
+        
+        
+        
+        )
+
     db.session.add(movement)
     db.session.commit()
-    return movement.id 
+    return str( movement)  
 
 
 
@@ -79,10 +88,10 @@ def in_post():
 @app.route('/in',methods=['POST'])
 def in_post1():
     o=request.json
-    move_detail = move_detail(id = o['id'])
+    move_detail = move_detail(email = o['email'])
     db.session.add(move_detail)
     db.session.commit()
-    return move_detail.id 
+    return str (move_detail.id)
 
 
 
