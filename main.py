@@ -21,6 +21,7 @@ print (os.environ.get('SQLALCHEMY_DATABASE_URI'))
 app.config['SQLALCHEMY_DATABASE_URI'] =os.environ.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 
+
 class Movement(db.Model):
     __tablename__ = "move"
     id = db.Column(db.Integer(), primary_key=True)

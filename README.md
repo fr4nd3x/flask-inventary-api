@@ -64,3 +64,13 @@ proxi
 set HTTPS_PROXY=https://172.16.1.1:3128
 heroku login 
 set HTTPS_PROXY=https://proxy.server.com:portnumber
+
+heroku git:remote https://inv2022.herokuapp.com/ | https://git.heroku.com/inv2022.git
+
+heroku git:remote https://git.heroku.com/inv2022.git
+
+heroku git:remote inv2022
+git add .
+git commit -am "Hello Meduim App"
+
+$ heroku git:remote -a <your-heroku-application-name>
