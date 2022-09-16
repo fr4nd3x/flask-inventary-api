@@ -1,2 +1,1 @@
-web:  guinicorn  wsqi:app
-
+web: guinicorn wsqi:app

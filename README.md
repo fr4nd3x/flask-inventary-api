@@ -61,5 +61,6 @@ proxi
 
 172.16.1.1:3128
 
-export HTTPS_PROXY=172.16.1.1:3128
+set HTTPS_PROXY=https://172.16.1.1:3128
 heroku login 
+set HTTPS_PROXY=https://proxy.server.com:portnumber
