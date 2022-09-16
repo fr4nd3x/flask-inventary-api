@@ -33,7 +33,7 @@ conexion bd
 
 pip freeze > requirements.txt
  waitress-serve 
-
+web: waitress-serve wsqi:app
 
 
 

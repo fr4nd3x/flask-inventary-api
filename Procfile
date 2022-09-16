@@ -1,1 +1,1 @@
-web: waitress-serve wsqi:app
+web: flask --app main run
