@@ -57,5 +57,9 @@ bd browser for sql lite
 
 login heroku 
 login heroku-i
+proxi
 
-direccion:172.16.1.1 - puerto :3128
+172.16.1.1:3128
+
+export HTTPS_PROXY=172.16.1.1:3128
+heroku login 

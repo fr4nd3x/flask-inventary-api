@@ -2,7 +2,9 @@ from concurrent.futures import CancelledError
 import email
 from pyexpat import model
 from sqlite3 import Date
+from tracemalloc import start
 from venv import create
+from webbrowser import get
 from zipapp import create_archive
 from flask import Flask,jsonify, request  
 import os 
@@ -69,14 +71,7 @@ def index():
 @app.route('/in',methods=['POST'])
 def in_post():
     o=request.json
-    movement=Movement(
-            fullname = o['fullname']
-            
-        
-        
-        
-        )
-
+    movement=Movement(  )
     db.session.add(movement)
     db.session.commit()
     return str( movement)  
