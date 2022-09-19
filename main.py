@@ -10,10 +10,15 @@ from flask import Flask,jsonify, request
 import os 
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
-app = Flask(__name__)
+from flask_cors import CORS
+
+
+
+
 
 #from app import routes
 app=Flask(__name__)
+cors = CORS(app)
 if __name__ == "__main___":
     app.run(debug=True)
 
