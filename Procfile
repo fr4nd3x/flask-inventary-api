@@ -1,1 +1,1 @@
-web: flask --app main run
+web: gunicorn wsqi:app
