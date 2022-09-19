@@ -18,7 +18,9 @@ if __name__ == "__main___":
     app.run(debug=True)
 
 print (os.environ.get('SQLALCHEMY_DATABASE_URI'))
-app.config['SQLALCHEMY_DATABASE_URI'] =os.environ.get('SQLALCHEMY_DATABASE_URI')
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///inventory.db'
+print (app.config['SQLALCHEMY_DATABASE_URI'] )
+#os.environ.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 
 
