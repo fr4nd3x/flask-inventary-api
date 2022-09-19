@@ -11,6 +11,10 @@ cors = "*"
 flask-sqlalchemy = "*"
 python-dotenv = "*"
 flask-cors = "*"
+sqlalchemy-serializer = "*"
+marshmallow = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 

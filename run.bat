@@ -1,0 +1,1 @@
+pipenv shell&flask --app main run
