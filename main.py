@@ -1,6 +1,7 @@
 from concurrent.futures import CancelledError
 import email
 from pyexpat import model
+from re import search
 from sqlite3 import Date
 from tracemalloc import start
 from venv import create
@@ -78,11 +79,9 @@ class MoveDetail (db.Model, SerializerMixin):
     def _repr_(self):
         return f'< move_detail {self.id}>'
 
-    def __str__(self) -> str:
+   
 
 
-
-        return super().__str__()
 #print(type(Movement.__table__))
 
 #for x in Movement.__table__.columns:        
@@ -109,15 +108,49 @@ db.session.commit()
 @app.route('/index')
 def index():
 
-#request.
-    all_categories = Movement.query.all()
-    result = categories_schema.dump(all_categories)
+    """name = request.args.get("name")
+    
+    search = "%{}%".format(name)
+    all_categories = Movement.query.filter(Movement.name.like("search")).all()
 
-    data = {
-        'message': 'All Categories!',
-        'status': 200,
-        'data': result
-    }
+    result = categories_schema.dump(all_categories)"""
+
+    data = [
+     {
+        'id': 1,
+        'order_num': 'N° 0118-2022-SGCP',
+        'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+        'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+        'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+        'date': '11/03/2022'
+    },
+    {
+        'id': 2,
+        'order_num': 'N° 0119-2022-SGCP',
+        'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+        'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+        'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+        'date': '11/03/2022'
+    },
+    {
+        'id': 3,
+        'order_num': 'N° 0120-2022-SGCP' ,
+        'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+        'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+        'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+        'date': '11/03/2022'
+    },
+    {
+        'id': 4,
+        'order_num': 'N° 0121-2022-SGCP' ,
+        'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+        'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+        'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+        'date': '11/03/2022'
+    }   
+    
+    ]
+
     return make_response(jsonify(data))
 
 
@@ -167,37 +200,8 @@ def detail_post():
     
 @app.route('/movement',methods=["GET"])
 def movement_get():
-    data= [{'id': 1,
-'order_num': 'N° 0118-2022-SGCP', 
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
-'date': '11/03/2022'},
-{'id': 2,
-'order_num': 'N° 0119-2022-SGCP' ,
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
-'date': '11/03/2022'},
-{
-'id': 3,
-'order_num': 'N° 0120-2022-SGCP' ,
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
-'date': '11/03/2022'
-},
-{'id': 4,
-'order_num': 'N° 0121-2022-SGCP' ,
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
-'date': '11/03/2022'
-}
-
-
-
-    ]
+    data= { ""
+    } 
     return jsonify(data)    
 
 
