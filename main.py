@@ -54,22 +54,15 @@ class Movement(db.Model, SerializerMixin):
 
     def _repr_(self):
         return f'< Movement {self.id}>'
-    
-
-
 ##print(dir(Movement))
 #property_names=[p for p in dir(Movement) if isinstance(getattr(Movement,p),property)]
 #print( property_names)
-
 #for name in Movement().property_names():
 #    print(name)
 
-class Move_detail (db.Model, SerializerMixin):
+class MoveDetail (db.Model, SerializerMixin):
     #id = db.Column(db.Integer(), unique=True, nullable=False)
     __tablename__ = "Move_detail"
-   
- 
-
     id = db.Column(db.Integer(), primary_key=True, unique=True)
     code_patrimonial= db.Column(db.Integer(), nullable=False)
     denomination= db.Column(db.String(30), unique=True, nullable=False)
@@ -85,7 +78,11 @@ class Move_detail (db.Model, SerializerMixin):
     def _repr_(self):
         return f'< move_detail {self.id}>'
 
-    
+    def __str__(self) -> str:
+
+
+
+        return super().__str__()
 #print(type(Movement.__table__))
 
 #for x in Movement.__table__.columns:        
@@ -112,7 +109,7 @@ db.session.commit()
 @app.route('/index')
 def index():
 
-
+#request.
     all_categories = Movement.query.all()
     result = categories_schema.dump(all_categories)
 
@@ -170,8 +167,37 @@ def detail_post():
     
 @app.route('/movement',methods=["GET"])
 def movement_get():
-    data={'id':1,'name':'mary'}
-    
+    data= [{'id': 1,
+'order_num': 'N° 0118-2022-SGCP', 
+'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+'date': '11/03/2022'},
+{'id': 2,
+'order_num': 'N° 0119-2022-SGCP' ,
+'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+'date': '11/03/2022'},
+{
+'id': 3,
+'order_num': 'N° 0120-2022-SGCP' ,
+'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+'date': '11/03/2022'
+},
+{'id': 4,
+'order_num': 'N° 0121-2022-SGCP' ,
+'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA',
+'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL',
+'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH',
+'date': '11/03/2022'
+}
+
+
+
+    ]
     return jsonify(data)    
 
 
