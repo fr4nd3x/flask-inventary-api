@@ -9,7 +9,7 @@ from sqlalchemy_serializer import SerializerMixin
 from flask_marshmallow import Marshmallow
 from sqlalchemy.orm import class_mapper
 
-#from app import routes
+
 app=Flask(__name__)
 ma = Marshmallow(app)
 cors = CORS(app)
@@ -161,7 +161,6 @@ def detail_post():
         return str( moveDetail) 
     except Exception as e:
         return jsonify(str(e))
-
 
 #--------------------------------------------------------------------------------------------------------------------------
 
