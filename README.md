@@ -90,37 +90,8 @@ Install all dependences with pipenv (No run shell!)
 
 
 
- [
-{
-'id': '1'
-'order_num': 'N° 0118-2022-SGCP' 
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA'
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL'
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH'
-'date': '11/03/2022'
-},
-{
-'id': '2'
-'order_num': 'N° 0119-2022-SGCP' 
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA'
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL'
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH'
-'date': '11/03/2022'
-},
-{
-'id': '3'
-'order_num': 'N° 0120-2022-SGCP' 
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA'
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL'
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH'
-'date': '11/03/2022'
-},
-{
-'id': '4'
-'order_num': 'N° 0121-2022-SGCP' 
-'fullname_user': 'Abog. EVELIN MARGOT CUIZANO COLONIA'
-'unidad_organica': 'SUB - GERENCIA DE RECURSOS HUMANOS - AREA BIENESTAR SOCIAL'
-'local': 'SEDE CENTRAL DEL GOBIERNO REGIONAL DE ANCASH'
-'date': '11/03/2022'
-}
-]
+
+
+
+
+
