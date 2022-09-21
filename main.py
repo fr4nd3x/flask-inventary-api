@@ -91,11 +91,12 @@ categories_schema = CategorySchema(many=True)
 db.create_all()
 db.session.commit()
 
+#--------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/')
 @app.route('/index')
 def index():
-#----------------------------------------------------------------------------------
+
     code_patrimonial = request.args.get("code_patrimonial")
     page = 0
     offset=(page*50)
@@ -113,8 +114,7 @@ def index():
         'data':result
     }
 
-    #----------------------------------------------------------------------------------
-
+#-------------------------------------------------------------------------------------------
     fullName = request.args.get("fullName")
     page=0
     offset=(page*50)
@@ -133,8 +133,7 @@ def index():
 
     return make_response(jsonify(data))
 
-
-
+#--------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/in',methods=['POST'])
 def in_post():
@@ -156,7 +155,6 @@ def in_post():
     except Exception as e:
         return jsonify(str(e) )
      
-
 @app.route('/detail',methods=["POST"])
 def detail_post():
     o=request.json
@@ -174,6 +172,12 @@ def detail_post():
         return str( moveDetail) 
     except Exception as e:
         return jsonify(str(e))
+
+
+#--------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
