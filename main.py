@@ -37,7 +37,7 @@ def get_attrs(klass):
 #--------------------------------------------------------------------------------------------------------------------
 class Movement(db.Model, SerializerMixin):
     __tablename__ = "move"
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer(), primary_key=True)
     fullName= db.Column('fullName',db.String(50))
     email = db.Column(db.String(80))
     dependence_id= db.Column('dependence_id',db.String(50))
@@ -56,7 +56,7 @@ class Movement(db.Model, SerializerMixin):
 #--------------------------------------------------------------------------------------------------------------------
 class MoveDetail (db.Model, SerializerMixin):
     __tablename__ = "Move_detail"
-    id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer(), primary_key=True)
     moveId= db.Column("move_id",db.Integer(),nullable=False)
     code_patrimonial= db.Column(db.Integer())
     denomination= db.Column(db.String(30))
@@ -90,8 +90,6 @@ categories_schema = CategorySchema(many=True)
 
 db.create_all()
 db.session.commit()
-
-#--------------------------------------------------------------------------------------------------------------------------
 
 @app.route('/')
 @app.route('/index')
