@@ -1,7 +1,7 @@
 
 from re import A
 from shutil import move
-from flask import Flask,jsonify, request  ,make_response
+from flask import Flask,jsonify, request  ,make_response, Response
 import os 
 from sqlalchemy.sql import func
 from flask_sqlalchemy import SQLAlchemy
@@ -12,9 +12,10 @@ from flask_marshmallow import Marshmallow
 from sqlalchemy import  ForeignKey
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.ext.declarative import declarative_base
+from flask_graphql import GraphQLView
+from sqlalchemy import or_, not_, and_
 from collections.abc import Iterable
-
-
+import requests
 
 app=Flask(__name__)
 ma = Marshmallow(app)
@@ -46,7 +47,7 @@ class Movement(db.Model, SerializerMixin,Base):
     date = db.Column(db.DateTime())
     dni = db.Column(db.Integer())
     createDate = db.Column(db.DateTime())
-    Canceled = db.Column(db.Numeric(1))
+    canceled = db.Column(db.Integer())
     deleteDate = db.Column(db.DateTime(80))
     uid = db.Column(db.String(20))
 
@@ -60,7 +61,7 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     __tablename__ = "move_detail"
     id = db.Column(db.Integer(), primary_key=True)
     moveId= db.Column('move_id',db.Integer(),ForeignKey("move.id"),nullable=False)
-    code_patrimonial= db.Column(db.Integer())
+    codePatrimonial= db.Column('code_patrimonial',db.Integer())
     denomination= db.Column(db.String(30))
     marca = db.Column("marca",db.String(10))
     model = db.Column(db.String(20 ))
@@ -69,6 +70,7 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     others= db.Column(db.String(20))
     condition = db.Column(db.String(1))
     observation = db.Column(db.String(50))
+    canceled = db.Column(db.Integer())
     
     move = relationship("Movement",back_populates="_details")
    
@@ -106,7 +108,9 @@ def index(offset=0,limit=50):
     offset=int(offset)
     limit=int(limit)
     fullName = request.args.get("fullName")
-    query=Movement.query
+    query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
+
+
     if fullName:
         fullName = "%{}%".format(fullName)
         query=query.filter(Movement.fullName.like(fullName))
@@ -120,36 +124,39 @@ def index(offset=0,limit=50):
     return make_response(jsonify(data))
 
 def _json(o):
-    return make_response(jsonify(o))
+    response = make_response(
+        jsonify(o)
+    )
+    response.headers["Content-Type"] = "application/json"
+    return response
 
-@app.route('/<moveId>',methods=['GET'])
-def move_get(moveId):
-    moveId=int(moveId)
-    movement = Movement.query.get(moveId)
-    details=movement._details
-    db.session.expunge(movement)
-    for detail in details:
-        db.session.expunge(detail)
-    movementSchema = MoveSchema()   
-    movement=movementSchema.dump(movement)
-    moveDetailSchema = MoveDetailSchema(many=True) 
-    movement['details']=moveDetailSchema.dump(details)
 
-    return _json(movement)
 
+@app.route('/<ids>',methods=['DELETE'])
+def move_delete(ids):
+
+
+    for moveId in ids.split(','):
+        moveId=int(moveId)
+        movement = Movement.query.get(moveId)
+        movement.canceled=1
+        db.session.merge(movement)
+
+    db.session.commit()
+    return _json(1)
 
 
 @app.route('/<moveId>/detail')
 def moveDetail(moveId):
     page=int(page)
     size=int(size)
-    code_patrimonial = request.args.get("code_patrimonial")
+    codePatrimonial = request.args.get("codePatrimonial")
     offset=(page*size)
     limit=(size*(page+1))
     query=MoveDetail.query
-    if code_patrimonial:
-        code_patrimonial = "%{}%".format(code_patrimonial)
-        query=query.filter(MoveDetail.code_patrimonial.like(code_patrimonial))
+    if codePatrimonial:
+        codePatrimonial = "%{}%".format(codePatrimonial)
+        query=query.filter(MoveDetail.codePatrimonial.like(codePatrimonial))
     size= query.count()
     moveDetails = query.offset(offset).limit(limit).all()
     result = movement_schema.dump(moveDetails)
@@ -169,14 +176,6 @@ def seed():
 
         }
 
-        """""  
-            dependence_id = 1,
-            dependence = "dependence",
-            company ="company" + i,
-            reference = "reference" + i,
-            dni= "dni" + i
-            createDate =  date.today,
-            uid = 1"""""
         
         movement=Movement(**args)
         db.session.add(movement)
@@ -229,8 +228,34 @@ def detail_post():
     except Exception as e:
         return jsonify(str(e))
 
-#--------------------------------------------------------------------------------------------------------------------------
 
+@app.route('/url')
+def get_data():
+    print(move_get(5))
+    conten =  requests.get('http://web.regionancash.gob.pe/fs/aviso.pdf').content
+    return Response(conten, mimetype='application/pdf')
+
+
+@app.route('/favicon.ico') 
+def favicon(): 
+    return None
+
+
+
+@app.route('/<moveId>')
+def move_get(moveId):
+    print('id='+str(moveId))
+    moveId=int(moveId)
+    movement = Movement.query.get(moveId)
+    details=movement._details
+    db.session.expunge(movement)
+    for detail in details:
+        db.session.expunge(detail)
+    movementSchema = MoveSchema()   
+    movement=movementSchema.dump(movement)
+    moveDetailSchema = MoveDetailSchema(many=True) 
+    movement['details']=moveDetailSchema.dump(details)
+    return _json(movement)
 
 
 
