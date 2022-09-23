@@ -88,9 +88,13 @@ Install all dependences with pipenv (No run shell!)
  pipenv install  flask-cors
 
 
+https://inv2022.herokuapp.com/<offset>/<limit>
 
-
-
+return
+{
+    data:[],
+    total:<number>
+}
 
 
 

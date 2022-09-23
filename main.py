@@ -10,7 +10,7 @@ from datetime import datetime
 from sqlalchemy_serializer import SerializerMixin
 from flask_marshmallow import Marshmallow
 from sqlalchemy import  ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.ext.declarative import declarative_base
 from collections.abc import Iterable
 
@@ -29,7 +29,7 @@ print (app.config['SQLALCHEMY_DATABASE_URI'] )
 db = SQLAlchemy(app)
 def get_attrs(klass):
   return [k for k in dir(klass)
-            if not callable(k) and not k.startswith('_') and not k.endswith('_') and k not in [ 'date_format', 'datetime_format', 'decimal_format','get_tzinfo','serializable_keys', 'serialize_only', 'serialize_rules', 'serialize_types', 'time_format', 'to_dict','metadata', 'query', 'query_class','registry']]
+            if not callable(k) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','get_tzinfo','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'to_dict','metadata', 'query', 'query_class','registry']]
 
 #--------------------------------------------------------------------------------------------------------------------
 Base = declarative_base()
@@ -50,6 +50,8 @@ class Movement(db.Model, SerializerMixin,Base):
     deleteDate = db.Column(db.DateTime(80))
     uid = db.Column(db.String(20))
 
+    _details = relationship("MoveDetail", back_populates="move")
+    details= None
 
     def _repr_(self):
         return f'< Movement {self.id}>'
@@ -67,25 +69,29 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     others= db.Column(db.String(20))
     condition = db.Column(db.String(1))
     observation = db.Column(db.String(50))
-    Move = relationship ("Movement", foreign_keys = [moveId])
     
+    move = relationship("Movement",back_populates="_details")
    
 
     def _repr_(self):
         return f'< MoveDetail {self.id}>'
 #--------------------------------------------------------------------------------------------------------------------
 
+fields=get_attrs(Movement)
+print(fields)
 
 class MoveSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Movement
         fields =get_attrs(Movement)
 
-
-
-
-print(get_attrs(Movement))
-
+fields=get_attrs(MoveDetail)
+print(fields)
+class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = MoveDetail
+        fields =fields
+        
 category_schema = MoveSchema()
 movement_schema = MoveSchema(many=True)   
 
@@ -113,15 +119,25 @@ def index(offset=0,limit=50):
     }
     return make_response(jsonify(data))
 
-def toJSON(o):
-    schema = MoveSchema(many=isinstance(o, Iterable))
-    return make_response(jsonify(schema.dump(o)))
+def _json(o):
+    return make_response(jsonify(o))
 
 @app.route('/<moveId>',methods=['GET'])
 def move_get(moveId):
     moveId=int(moveId)
     movement = Movement.query.get(moveId)
-    return toJSON(movement)
+    details=movement._details
+    db.session.expunge(movement)
+    for detail in details:
+        db.session.expunge(detail)
+    movementSchema = MoveSchema()   
+    movement=movementSchema.dump(movement)
+    moveDetailSchema = MoveDetailSchema(many=True) 
+    movement['details']=moveDetailSchema.dump(details)
+
+    return _json(movement)
+
+
 
 @app.route('/<moveId>/detail')
 def moveDetail(moveId):
@@ -141,7 +157,7 @@ def moveDetail(moveId):
         'size':size,
         'data':result
     }
-    return make_response(jsonify(data))
+    return _json(data)
 
 #--------------------------------------------------------------------------------------------------------------------------
 @app.route('/seed',methods=['GET'])
