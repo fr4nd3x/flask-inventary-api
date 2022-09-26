@@ -17,6 +17,8 @@ flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 flask-script = "*"
 flask-graphql = "*"
+pyjwt = "*"
+pillow = "*"
 
 [dev-packages]
 

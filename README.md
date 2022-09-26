@@ -1,3 +1,4 @@
+We work with flask 
 mkdir flask-inventry-api
 
 cd flask-inventry-api

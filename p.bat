@@ -1,4 +1,4 @@
-::  Push github an heroku 
+::  Push github and heroku 
 git add .
 git commit -am %1
 git push -u origin

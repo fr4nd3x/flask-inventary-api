@@ -19,7 +19,7 @@ from sqlalchemy import or_, not_, and_
 from collections.abc import Iterable
 import requests
 import tempfile
-
+from app.auth_middleware import token_required
 app=Flask(__name__)
 ma = Marshmallow(app)
 cors = CORS(app)
@@ -107,7 +107,9 @@ db.session.commit()
 
 @app.route('/<offset>/<limit>')
 @app.route('/index')
-def index(offset=0,limit=50):
+@token_required
+def index(current_user,offset=0,limit=50):
+    print(current_user)
     offset=int(offset)
     limit=int(limit)
     fullName = request.args.get("fullName")
