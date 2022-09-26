@@ -1,6 +1,8 @@
 
+from email import message
 from re import A
 from shutil import move
+from wsgiref.util import application_uri
 from flask import Flask,jsonify, request  ,make_response, Response
 import os 
 from sqlalchemy.sql import func
@@ -16,6 +18,7 @@ from flask_graphql import GraphQLView
 from sqlalchemy import or_, not_, and_
 from collections.abc import Iterable
 import requests
+import tempfile
 
 app=Flask(__name__)
 ma = Marshmallow(app)
@@ -131,6 +134,23 @@ def _json(o):
     return response
 
 
+#
+
+@app.route('/<idd>',methods=['PUT'])
+def move_put(ids):
+
+
+    for moveId in ids.split(','):
+        moveId=int(moveId)
+        movement = Movement.query.get(moveId)
+        movement.add=1
+        db.session.merge(movement)
+
+    db.session.commit()
+    return _json(1)
+
+#
+
 
 @app.route('/<ids>',methods=['DELETE'])
 def move_delete(ids):
@@ -141,13 +161,22 @@ def move_delete(ids):
         movement = Movement.query.get(moveId)
         movement.canceled=1
         db.session.merge(movement)
+    
+    if id ():
+        message.filter_by(fullname=id) 
+        db.session = request.args.get(db.session)
+    if db.session():
+        message.filter_by(db.session)
+    if move_detail ():
+        message.filter_by(move_detasil= move_detail)
 
+    db.session.delete(move_detail)
     db.session.commit()
     return _json(1)
 
 
 @app.route('/<moveId>/detail')
-def moveDetail(moveId):
+def move_detail(moveId):
     page=int(page)
     size=int(size)
     codePatrimonial = request.args.get("codePatrimonial")
@@ -173,7 +202,6 @@ def seed():
         args={
             "fullName":"fullname-"+str(i),
             "email" :"email-" +str(i),
-
         }
 
         
@@ -187,7 +215,7 @@ def seed():
             movementDet=MoveDetail(**args)
             db.session.add(movementDet)  
     db.session.commit()
-    return jsonify(str(True) )
+    return jsonify(str(True))
 
 
 @app.route('/in',methods=['POST'])
@@ -229,22 +257,26 @@ def detail_post():
         return jsonify(str(e))
 
 
-@app.route('/url')
+@app.route('/url',)
 def get_data():
-    print(move_get(5))
-    conten =  requests.get('http://web.regionancash.gob.pe/fs/aviso.pdf').content
+    #SaveToFile(move_get(5).get_data(as_text=True).'data.json')
+    temp = tempfile.TemporaryFile()
+    """with open () as f :
+        f.write (stuff)""" 
+    m=_move_get(5)
+    m=[m]
+    temp.write(jsonify(m).get_data(as_text=False))
+    temp.seek(0)
+    data=temp.read()
+    temp.close()
+    conten =  requests.post('http://web.regionancash.gob.pe/api/jreport/', 
+        files={'file':data },
+        data={'filename': 'data.json','template':'pad'}).content
+   
     return Response(conten, mimetype='application/pdf')
 
 
-@app.route('/favicon.ico') 
-def favicon(): 
-    return None
-
-
-
-@app.route('/<moveId>')
-def move_get(moveId):
-    print('id='+str(moveId))
+def _move_get(moveId):
     moveId=int(moveId)
     movement = Movement.query.get(moveId)
     details=movement._details
@@ -255,9 +287,10 @@ def move_get(moveId):
     movement=movementSchema.dump(movement)
     moveDetailSchema = MoveDetailSchema(many=True) 
     movement['details']=moveDetailSchema.dump(details)
-    return _json(movement)
+    return movement
 
-
-
-
+@app.route('/<moveId>')
+def move_get(moveId):
+    return jsonify(_move_get(moveId))
+    
 
