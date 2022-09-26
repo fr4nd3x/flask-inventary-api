@@ -108,8 +108,8 @@ db.session.commit()
 @app.route('/<offset>/<limit>')
 @app.route('/index')
 @token_required
-def index(current_user,offset=0,limit=50):
-    print(current_user)
+def index(user,offset=0,limit=50):
+    print(user)
     offset=int(offset)
     limit=int(limit)
     fullName = request.args.get("fullName")
@@ -139,7 +139,8 @@ def _json(o):
 #
 
 @app.route('/<idd>',methods=['PUT'])
-def move_put(ids):
+@token_required
+def move_put(user,ids):
 
 
     for moveId in ids.split(','):
@@ -155,6 +156,7 @@ def move_put(ids):
 
 
 @app.route('/<ids>',methods=['DELETE'])
+
 def move_delete(ids):
 
 
@@ -219,6 +221,16 @@ def seed():
     db.session.commit()
     return jsonify(str(True))
 
+
+@app.route('/token',methods=['POST'])
+def token_post():
+    o=request.json
+    try:    
+        token=o['code']
+        
+        return str( token) 
+    except Exception as e:
+        return jsonify(str(e) )
 
 @app.route('/in',methods=['POST'])
 def in_post():
