@@ -79,7 +79,7 @@ class MoveDetail (db.Model, SerializerMixin,Base):
    
 
     def _repr_(self):
-        return f'< MoveDetail {self.id}>'
+        return {"id": self.id}
 #--------------------------------------------------------------------------------------------------------------------
 
 fields=get_attrs(Movement)
