@@ -45,13 +45,13 @@ class Movement(db.Model, SerializerMixin,Base):
     email = db.Column(db.String(80))
     dependence_id= db.Column('dependence_id',db.String(50))
     dependence = db.Column(db.String(50 ))
-    company = db.Column(db.Integer())
+    company = db.Column(db.String(50))
     reference = db.Column(db.String(50))
     date = db.Column(db.DateTime())
     dni = db.Column(db.Integer())
     createDate = db.Column(db.DateTime())
     canceled = db.Column(db.Integer())
-    deleteDate = db.Column(db.DateTime(80))
+    deleteDate = db.Column(db.DateTime())
     uid = db.Column(db.String(20))
 
     _details = relationship("MoveDetail", back_populates="move")
@@ -277,6 +277,11 @@ def get_data():
 
 
 def _move_get(moveId):
+    try:
+        int(moveId)
+    except Exception as e:
+        print(e)
+        return None
     moveId=int(moveId)
     movement = Movement.query.get(moveId)
     details=movement._details
