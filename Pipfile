@@ -19,6 +19,8 @@ flask-script = "*"
 flask-graphql = "*"
 pyjwt = "*"
 pillow = "*"
+ariadne = "*"
+flask-migrate = "*"
 
 [dev-packages]
 
