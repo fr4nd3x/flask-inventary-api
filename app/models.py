@@ -47,8 +47,8 @@ class Movement(db.Model, SerializerMixin,Base):
 # :param offset: 0
 # :param limit: 10
 # :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
-
-    def getList(self,offset,limit,args):
+    @staticmethod
+    def getList(offset,limit,args):
 
 
         offset=int(offset)

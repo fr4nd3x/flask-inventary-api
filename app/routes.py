@@ -249,7 +249,6 @@ def _move_get(moveId):
 @app.route('/<moveId>')
 def move_get(moveId):
     m=_move_get(moveId)
-    print('=====================================')
     print(m)
     return jsonify(m)
 

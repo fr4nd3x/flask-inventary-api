@@ -10,13 +10,17 @@ type_defs = gql(
    
 """
    type Query {
-         movements (offset:Int  limit: Int):[Movement]
-    }
+      movements (offset:Int  limit: Int):Result
+   }
+   type Result{
+      data:[Movement]!
+      size:Int
+   }
    type Movement {
-       fullName: String
-       dni: String
-       type: String
-       }  
+      fullName: String
+      dni: String
+      type: String
+   }  
 
    """
 )
@@ -30,8 +34,7 @@ query = QueryType()
 @query.field('movements')
 def movements(*_,offset=0,limit=50):
    
-   
-    return make_response(jsonify(Movement.getList(offset,limit,[movements.to_json() for movements in movements.query.all()])))
+   return Movement.getList(offset,limit,request.args)
 
 
 #@query.field("movements") 
