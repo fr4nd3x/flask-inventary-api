@@ -4,15 +4,24 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy import  ForeignKey
+from sqlalchemy import or_
 
 ma = Marshmallow(app)
 
+
 def get_attrs(klass):
-  return [k for k in dir(klass)
-            if not callable(k) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','get_tzinfo','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'to_dict','metadata', 'query', 'query_class','registry']]
+    
+    # It returns a list of all the attributes of the class.
+    # :param klass: The class you want to get the attributes of
+    # It returns a list of all the attributes of the class.
+    return [k for k in dir(klass)
+            
+            if not callable(getattr(klass, k)) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'metadata', 'query', 'query_class','registry']]
 
 Base = declarative_base()
 
+
+# Movement is a class that inherits from db.Model, SerializerMixin, Base
 class Movement(db.Model, SerializerMixin,Base):
     __tablename__ = "move"
     id = db.Column(db.Integer(), primary_key=True)
@@ -33,8 +42,38 @@ class Movement(db.Model, SerializerMixin,Base):
     _details = relationship("MoveDetail", back_populates="move")
     details= None
 
+
+# A function that returns a list of movements.        
+# :param offset: 0
+# :param limit: 10
+# :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
+
+    def getList(self,offset,limit,args):
+
+
+        offset=int(offset)
+        limit=int(limit)
+        fullName = args.get("fullName")
+        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
+
+        # I'm trying to filter the query by the fullName parameter, but I'm getting an error.
+        # :return: A list of dictionaries        
+        if fullName:
+            fullName = "%{}%".format(fullName)
+            query=query.filter(Movement.fullName.like(fullName))
+        size= query.count()
+        movements = query.offset(offset).limit(limit).all()
+        
+        result = movement_schema.dump(movements)
+        return {
+            'size':size,
+            'data':result
+        }
     def _repr_(self):
         return f'< Movement {self.id}>'
+
+
+# MoveDetail is a class that inherits from db.Model, SerializerMixin, and Base
 class MoveDetail (db.Model, SerializerMixin,Base):
     __tablename__ = "move_detail"
     id = db.Column(db.Integer(), primary_key=True)
@@ -53,10 +92,11 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     move = relationship("Movement",back_populates="_details")
     def _repr_(self):
         return {"id": self.id}
-
 fields=get_attrs(Movement)
 
-
+# It's a class that inherits from ma.SQLAlchemyAutoSchema and has a Meta class that has a model
+# attribute that is set to Movement and a fields attribute that is set to the result of the get_attrs
+# function
 class MoveSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Movement
@@ -64,15 +104,16 @@ class MoveSchema(ma.SQLAlchemyAutoSchema):
 
 fields=get_attrs(MoveDetail)
 print(fields)
+
+
+# The MoveDetailSchema class inherits from the SQLAlchemyAutoSchema class, which is a class that
+# inherits from the Schema class
 class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = MoveDetail
         fields =fields
         
 category_schema = MoveSchema()
-movement_schema = MoveSchema(many=True)   
-
-
-
+movement_schema = MoveSchema(many=True)
 db.create_all()
 db.session.commit()

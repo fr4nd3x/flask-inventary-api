@@ -1,8 +1,5 @@
 from functools import wraps
-import jwt
-from flask import request, abort
-from flask import current_app
-
+from flask import request
 
 def token_required(f):
     @wraps(f)
@@ -17,7 +14,7 @@ def token_required(f):
                 "error": "Unauthorized"
             }, 401
         try:
-            #data=jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+            
             current_user =  {"uid" :1, "name" : "franc"} #models.User().get_by_id(data["user_id"])
             """if current_user is None:
                 return {
