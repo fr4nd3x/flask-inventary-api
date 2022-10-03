@@ -1,11 +1,28 @@
 from flask_migrate import Migrate
 from ariadne import gql, QueryType, make_executable_schema, graphql_sync
-from app.models import Movement
+from app.models import Movement,get_attrs
 from flask import request, jsonify,make_response
 from ariadne.constants import PLAYGROUND_HTML
 from app import app
 
 # Define type definitions (schema) using SDL
+
+fields=get_attrs(Movement)
+
+f = """
+
+      fullName: String
+      dni: String
+      type: String
+
+
+
+"""
+f=""
+for f0 in fields:
+   f+=(f0+":String ")
+print(f)
+
 type_defs = gql(
    
 """
@@ -17,9 +34,9 @@ type_defs = gql(
       size:Int
    }
    type Movement {
-      fullName: String
-      dni: String
-      type: String
+"""
++f+
+"""
    }  
 
    """
@@ -39,9 +56,9 @@ def movements(*_,offset=0,limit=50):
 
 #@query.field("movements") 
 # def movements(*_):moveDetailSchema(details)
-   #return Movement.getList()
-   #return 
-   #return Movement.getList(offset,limit,{})
+#return Movement.getList()
+#return 
+#return Movement.getList(offset,limit,{})
 
 schema = make_executable_schema(type_defs,query)
 
