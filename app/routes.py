@@ -1,6 +1,6 @@
 from concurrent.futures.process import _threads_wakeups
 from app import app,db
-from flask import request, jsonify,url_for
+from flask import request, jsonify
 from app.auth_middleware import token_required
 from app.models import get_attrs,Movement,movement_schema,MoveDetail,MoveDetailSchema,MoveSchema
 from datetime import datetime
@@ -28,18 +28,22 @@ def index(user,offset=0,limit=50):
     offset=int(offset)
     limit=int(limit)
     fullName = request.args.get("fullName")
+    type = request.args.get("type")
     query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
 
     if fullName:
         fullName = "%{}%".format(fullName)
         query=query.filter(Movement.fullName.like(fullName))
-        size= query.count()
-        movements = query.offset(offset).limit(limit).all()
-        result = movement_schema.dump(movements)
-        data = {
-            'size':size,
-            'data':result
-        }
+    if type:
+        type = "%{}%".format(type)
+        query=query.filter(Movement.type.like(type))
+    size= query.count()
+    movements = query.offset(offset).limit(limit).all()
+    result = movement_schema.dump(movements)
+    data = {
+        'size':size,
+        'data':result
+    }
     return make_response(jsonify(data))
 
 def _json(o):
@@ -150,7 +154,7 @@ def token_post():
     try:    
         token=o['code']
         
-        return str( token) 
+        return str(token) 
     except Exception as e:
         return jsonify(str(e))
 

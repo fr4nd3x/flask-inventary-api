@@ -81,4 +81,4 @@ def graphql_server():
    success, result = graphql_sync(schema, data, context_value = {"request": request})
    status_code = 200 if success else 400
    return jsonify(result), status_code
-    
+   
