@@ -1,9 +1,9 @@
+from app import app
 from flask_migrate import Migrate
 from ariadne import gql, QueryType, make_executable_schema, graphql_sync
 from app.models import Movement,get_attrs
 from flask import request, jsonify,make_response
 from ariadne.constants import PLAYGROUND_HTML
-from app import app
 
 # Define type definitions (schema) using SDL
 
