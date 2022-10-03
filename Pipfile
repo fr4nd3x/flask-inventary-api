@@ -21,6 +21,7 @@ pyjwt = "*"
 pillow = "*"
 ariadne = "*"
 flask-migrate = "*"
+waitress = "*"
 
 [dev-packages]
 
