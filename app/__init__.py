@@ -13,7 +13,7 @@ print (app.config['SQLALCHEMY_DATABASE_URI'] )
 
 db = SQLAlchemy(app)
 
-from app import models,routes,graphQL,auth_middleware
+from app import models,routes,auth_middleware
 
 
 
