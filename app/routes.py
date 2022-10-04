@@ -178,7 +178,7 @@ def in_post():
         db.session.add(movement)
         db.session.commit()
         
-        return _json(movement) 
+        return (movement) 
     except Exception as e:
         return jsonify(str(e))
      
