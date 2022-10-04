@@ -1,9 +1,0 @@
-<service>
-  <id>InventaryAPI</id>
-  <name>Flask OAuth2 Service</name>
-  <description>Flask OAuth2 Service.</description>
-  <executable>"C:\Users\Administrador.WIN-5UFR8AED4T8\AppData\Local\Programs\Python\Python39\Scripts\pipenv"</executable>
-  <arguments>run run.bat</arguments>
-  <logmode>rotate</logmode>
-  <stopparentprocessfirst>true</stopparentprocessfirst>
-</service>
