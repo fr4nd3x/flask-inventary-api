@@ -86,7 +86,7 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     __tablename__ = "move_detail"
     id = db.Column(db.Integer(), primary_key=True)
     moveId= db.Column('move_id',db.Integer(),ForeignKey("move.id"),nullable=False)
-    codePatrimonial= db.Column('code_patrimonial',db.Integer())
+    codePatrimonial= db.Column('code_patrimonial',db.String(20))
     denomination= db.Column(db.String(30))
     marca = db.Column("marca",db.String(10))
     model = db.Column(db.String(20 ))
