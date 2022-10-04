@@ -196,7 +196,7 @@ def detail_post():
         db.session.add(moveDetail)
         db.session.commit()
         
-        return str( moveDetail) 
+        return _json(MoveSchema().dump(moveDetail))
     except Exception as e:
         return jsonify(str(e))
 
@@ -232,7 +232,9 @@ def _move_get(moveId):
         print(e)
         return None
     moveId=int(moveId)
+    print('moveId='+str(moveId))
     movement = Movement.query.get(moveId)
+    print('movement='+str(movement))
     details=movement._details
     db.session.expunge(movement)
     for detail in details:
