@@ -96,8 +96,8 @@ return
     data:[],
     total:<number>
 }
-
-
+generate requirement.txt
+pipenv lock -r > requirements.txt
 
 https://developer.mozilla.org/es/docs/Learn/JavaScript/Objects/JSON
 
