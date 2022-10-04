@@ -101,19 +101,9 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     def _repr_(self):
         return {"id": self.id}
 
-
-try:
-    print('db.create_all()')
+with app.app_context():
     db.create_all()
-except:
-    print("Error on db.create_all()")
-
-try:
-    print('db.session.commit()')
     db.session.commit()
-except:
-    print("Error on db.session.commit()")
-
 
 fields=get_attrs(Movement)
 
