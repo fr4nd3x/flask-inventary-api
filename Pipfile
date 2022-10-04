@@ -22,8 +22,7 @@ pillow = "*"
 ariadne = "*"
 flask-migrate = "*"
 waitress = "*"
-flask-restplus = "*"
-werkzeug = "==0.16.1"
+markupsafe = "*"
 
 [dev-packages]
 

@@ -14,9 +14,17 @@ def get_attrs(klass):
     # It returns a list of all the attributes of the class.
     # :param klass: The class you want to get the attributes of
     # It returns a list of all the attributes of the class.
+    fields=[]
+    for k in dir(klass):
+        try:
+            att=getattr(klass, k)
+            if not callable(att) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'metadata', 'query', 'query_class','registry']:
+                fields.append(k)
+        except:
+            print("get_attrs: An exception occurred with "+k)
+    return fields
     return [k for k in dir(klass)
-            
-            if not callable(getattr(klass, k)) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'metadata', 'query', 'query_class','registry']]
+        if not callable(getattr(klass, k)) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'metadata', 'query', 'query_class','registry']]
 
 Base = declarative_base()
 
@@ -43,10 +51,10 @@ class Movement(db.Model, SerializerMixin,Base):
     details= None
 
 
-# A function that returns a list of movements.        
-# :param offset: 0
-# :param limit: 10
-# :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
+    # A function that returns a list of movements.        
+    # :param offset: 0
+    # :param limit: 10
+    # :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
     @staticmethod
     def getList(offset,limit,args):
 
@@ -92,7 +100,23 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     move = relationship("Movement",back_populates="_details")
     def _repr_(self):
         return {"id": self.id}
+
+
+try:
+    print('db.create_all()')
+    db.create_all()
+except:
+    print("Error on db.create_all()")
+
+try:
+    print('db.session.commit()')
+    db.session.commit()
+except:
+    print("Error on db.session.commit()")
+
+
 fields=get_attrs(Movement)
+
 
 # It's a class that inherits from ma.SQLAlchemyAutoSchema and has a Meta class that has a model
 # attribute that is set to Movement and a fields attribute that is set to the result of the get_attrs
@@ -103,8 +127,6 @@ class MoveSchema(ma.SQLAlchemyAutoSchema):
         fields =get_attrs(Movement)
 
 fields=get_attrs(MoveDetail)
-print(fields)
-
 
 # The MoveDetailSchema class inherits from the SQLAlchemyAutoSchema class, which is a class that
 # inherits from the Schema class
@@ -115,5 +137,4 @@ class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
         
 category_schema = MoveSchema()
 movement_schema = MoveSchema(many=True)
-db.create_all()
-db.session.commit()
+
