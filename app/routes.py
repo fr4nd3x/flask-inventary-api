@@ -1,4 +1,5 @@
 from concurrent.futures.process import _threads_wakeups
+from shutil import move
 from app import app,db
 from flask import request, jsonify
 from app.auth_middleware import token_required
@@ -10,8 +11,6 @@ from sqlalchemy import or_
 import tempfile
 import os 
 import requests
-
-
 
 # ROUTES
 # EndPoint 
@@ -177,8 +176,7 @@ def in_post():
         movement=Movement(**values)
         db.session.add(movement)
         db.session.commit()
-        
-        return (movement) 
+        return _json(MoveSchema().dump(movement))
     except Exception as e:
         return jsonify(str(e))
      
