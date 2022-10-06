@@ -148,8 +148,7 @@ def seed():
 # the JSON object
 # :return: <code>{
 #   "code": "4/AAB-wQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-@app.route('/token',methods=['POST'])   
-@token_required 
+@app.route('/token',methods=['POST'])    
 def token_post():
     o=request.json
     try:    
@@ -171,7 +170,7 @@ def token_post():
     
         response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
         o=json.loads(response.content)
-        return o['error']
+        return o
     except Exception as e:
         return jsonify(str(e))
 
