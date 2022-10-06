@@ -1,7 +1,7 @@
 from concurrent.futures.process import _threads_wakeups
 from shutil import move
 from app import app,db
-from flask import request, jsonify
+from flask import request, jsonify,json
 from app.auth_middleware import token_required
 from app.models import get_attrs,Movement,movement_schema,MoveDetail,MoveDetailSchema,MoveSchema
 from datetime import datetime
@@ -11,6 +11,7 @@ from sqlalchemy import or_
 import tempfile
 import os 
 import requests
+import base64
 
 # ROUTES
 # EndPoint 
@@ -52,8 +53,6 @@ def _json(o):
     response.headers["Content-Type"] = "application/json"
     return response
 
-
-
 #
 
 @app.route('/<idd>',methods=['PUT'])
@@ -74,13 +73,13 @@ def move_put(user,ids):
 # :param ids: The id of the movement to be deleted
 # :return: The return value of the function.
 @app.route('/<ids>',methods=['DELETE'])
+@token_required
 def move_delete(ids):
     for moveId in ids.split(','):
         moveId=int(moveId)
         movement = Movement.query.get(moveId)
         movement.canceled=1
         db.session.merge(movement)
-    
     if id ():
         message.filter_by(fullname=id) 
         db.session = request.args.get(db.session)
@@ -100,6 +99,7 @@ def move_delete(ids):
 # :return: A list of MoveDetail objects
 
 @app.route('/<moveId>/detail')
+@token_required
 def move_detail(moveId):
     page=int(page)
     size=int(size)
@@ -124,6 +124,7 @@ def move_detail(moveId):
 # It creates 10 Movement objects and 10 MovementDetail objects for each Movement object
 # :return: A JSON object.
 @app.route('/seed',methods=['GET'])
+@token_required
 def seed():
     for i in range(10):
         args={
@@ -147,13 +148,30 @@ def seed():
 # the JSON object
 # :return: <code>{
 #   "code": "4/AAB-wQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-@app.route('/token',methods=['POST'])    
+@app.route('/token',methods=['POST'])   
+@token_required 
 def token_post():
     o=request.json
     try:    
-        token=o['code']
-        
-        return str(token) 
+        code=o['code']
+        reqUrl = "http://web.regionancash.gob.pe/api/oauth/token"
+        headers = {
+            'Authorization': 'Basic {}'.format(
+                base64.b64encode(
+                '{username}:{password}'.format(
+                username='KJkKoTYmCGxnV2BPI1MtsLoT',
+                password='PkIaIeBjST85ByCa20skIBaWPviB4S1Pnie7qax4GDk6fbG9'
+
+                ).encode()
+                ).decode()
+            
+                
+            ),
+        }
+    
+        response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
+        o=json.loads(response.content)
+        return o['error']
     except Exception as e:
         return jsonify(str(e))
 
@@ -162,6 +180,7 @@ def token_post():
 # dictionary.
 # :return: The object that was created.
 @app.route('/in',methods=['POST'])
+@token_required
 def in_post():
     o=request.json
     try:    
@@ -183,6 +202,7 @@ def in_post():
 # It takes a JSON object, creates a MoveDetail object, and adds it to the database.
 # :return: The object that was created.
 @app.route('/detail',methods=["POST"])
+@token_required
 def detail_post():
     o=request.json
     try:    
@@ -205,6 +225,7 @@ def detail_post():
 # It takes a json file, sends it to the server, and returns a pdf file
 # :return: The response is a PDF file.
 @app.route('/url',)
+@token_required
 def get_data():
     temp = tempfile.TemporaryFile()
     """with open () as f :
@@ -226,6 +247,7 @@ def get_data():
 # :param moveId: the id of the movement to be retrieved
 # :return: A dictionary with the movement and details.
 def _move_get(moveId):
+    
     try:
         int(moveId)
     except Exception as e:
@@ -251,6 +273,7 @@ def _move_get(moveId):
 # :param moveId: The ID of the move to get
 # :return: A JSON object with the moveId and the moveName.
 @app.route('/<moveId>')
+@token_required
 def move_get(moveId):
     m=_move_get(moveId)
     print(m)
@@ -262,5 +285,6 @@ def move_get(moveId):
 # If the user requests the favicon.ico file, send it from the static folder.
 # :return: The favicon.ico file is being returned.    
 @app.route('/favicon.ico') 
+@token_required
 def favicon(): 
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')

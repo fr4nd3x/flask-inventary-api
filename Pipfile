@@ -23,6 +23,9 @@ ariadne = "*"
 flask-migrate = "*"
 waitress = "*"
 markupsafe = "*"
+flask-restx = "*"
+werkzeug = "*"
+restx-monkey = "*"
 
 [dev-packages]
 

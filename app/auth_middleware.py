@@ -1,6 +1,9 @@
 from functools import wraps
 from flask import request
-
+import os
+import requests
+import base64
+import json
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -14,8 +17,14 @@ def token_required(f):
                 "error": "Unauthorized"
             }, 401
         try:
-            
-            current_user =  {"uid" :1, "name" : "franc"} #models.User().get_by_id(data["user_id"])
+            url = os.environ.get('OAUTH_API')+'/api/me'
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic %s' % base64.b64encode('%s:%s' % (token,'sp'),
+                ),
+            }
+            o = json.loads( requests.request("GET", url, headers=headers).content)
+            current_user =  {"uid" :1, "name" : "franc"} 
             """if current_user is None:
                 return {
                 "message": "Invalid Authentication token!",
@@ -34,3 +43,21 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+    
+
+
+"""
+import hashlib
+import random
+def generate_token(length=12):
+#Genera un token único de 30 caracteres como máximo.
+chars = list(
+    'ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwyz01234567890'
+)
+random.shuffle(chars)
+chars = ''.join(chars)
+sha1 = hashlib.sha1(chars.encode('utf8'))
+token = sha1.hexdigest()
+return token[:length]
+
+"""
