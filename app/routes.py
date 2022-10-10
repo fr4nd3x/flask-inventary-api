@@ -1,5 +1,3 @@
-from concurrent.futures.process import _threads_wakeups
-from shutil import move
 from app import app,db
 from flask import request, jsonify,json
 from app.auth_middleware import token_required
@@ -130,6 +128,7 @@ def seed():
         args={
             "fullName":"fullname-"+str(i),
             "email" :"email-" +str(i),
+        
         }
         movement=Movement(**args)
         db.session.add(movement)
@@ -148,8 +147,7 @@ def seed():
 # the JSON object
 # :return: <code>{
 #   "code": "4/AAB-wQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-@app.route('/token',methods=['POST'])   
-@token_required 
+@app.route('/token',methods=['POST'])    
 def token_post():
     o=request.json
     try:    
@@ -164,11 +162,8 @@ def token_post():
 
                 ).encode()
                 ).decode()
-            
-                
             ),
         }
-    
         response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
         o=json.loads(response.content)
         return o['error']
@@ -176,6 +171,8 @@ def token_post():
         return jsonify(str(e))
 
 
+
+    
 # It takes a JSON object, creates a dictionary from it, and then creates a Movement object from the
 # dictionary.
 # :return: The object that was created.
@@ -205,7 +202,7 @@ def in_post():
 @token_required
 def detail_post():
     o=request.json
-    try:    
+    try:        
         values = {}
         for y in get_attrs(MoveDetail):
             try:
@@ -226,7 +223,7 @@ def detail_post():
 # :return: The response is a PDF file.
 @app.route('/url',)
 @token_required
-def get_data():
+def get_data(): 
     temp = tempfile.TemporaryFile()
     """with open () as f :
         f.write (stuff)""" 
@@ -247,7 +244,7 @@ def get_data():
 # :param moveId: the id of the movement to be retrieved
 # :return: A dictionary with the movement and details.
 def _move_get(moveId):
-    
+
     try:
         int(moveId)
     except Exception as e:
