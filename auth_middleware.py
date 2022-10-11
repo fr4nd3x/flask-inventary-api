@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import request
-import os
+import os,traceback
 import requests
 import base64
 import json
@@ -10,6 +10,7 @@ def token_required(f):
         token = None
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
+        print(type(token))
         if not token:
             return {
                 "message": "Authentication Token is missing!",
@@ -20,15 +21,13 @@ def token_required(f):
             url = os.environ.get('OAUTH_URL')+'/api/me'
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic %s' % token #base64.b64encode('%s:%s' % (token,'sp')
+                'Authorization': 'Bearer %s' % token #base64.b64encode(token.encode("utf-8")),
             }
-            print ("Bearer %s" % token)
             
+            print('Bearer %s' % token)
             o = json.loads( requests.request("GET", url, headers=headers).content)
-
-            if o["error"]:
-                return o,401
-            print (o) 
+            if o['error']: return o,401
+            print(o)
             current_user =  {"uid" :1, "name" : "franc"} 
             """if current_user is None:
                 return {
@@ -39,6 +38,7 @@ def token_required(f):
             if not current_user["active"]:
                 abort(403)"""
         except Exception as e:
+            traceback.print_exc()
             return {
                 "message": "Something went wrong",
                 "data": None,
