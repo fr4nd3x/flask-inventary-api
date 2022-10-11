@@ -17,7 +17,7 @@ print(SQLALCHEMY_DATABASE_URI)
 
 db = SQLAlchemy(app)
 
-from app import graphQL2, models,routes,auth_middleware,documentation
+from app import graphQL, models,routes,auth_middleware,documentation
 
 
 

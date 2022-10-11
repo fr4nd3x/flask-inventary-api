@@ -2,7 +2,7 @@ from flask import request,Blueprint
 from flask_restx import Api, Resource,reqparse
 from app import app 
 from app.routes import get_data,  move_get, seed
-from app.graphQL2 import graphql_server
+from app.graphQL import graphql_server
 from flask import  request, Flask
 from app.models import db,relationship
 
