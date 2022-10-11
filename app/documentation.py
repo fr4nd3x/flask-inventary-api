@@ -11,13 +11,6 @@ from app.models import db,relationship
 api = Api(app, version='2.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
 
-#req.headers.authorization.split('Bearer ')[1]
-
-
-
-
-
-
 
 parser = reqparse.RequestParser()
 parser.add_argument('var1', type=str, help='variable 1')
@@ -63,10 +56,10 @@ class MyResource(Resource):
         return move_get
 
 
-
+"""
 parser = reqparse.RequestParser()
-parser.add_argument('Full Name ', type=str, help='variable 1')
-parser.add_argument('Company', type=str, help='variable 2')
+parser.add_argument('Full Name ', type=str, help='')
+parser.add_argument('Company', type=str, help='')
 @api.route('/in/<string:id>')
 class HelloWorldParameter(Resource):
     @api.doc(parser=parser)
@@ -75,6 +68,12 @@ class HelloWorldParameter(Resource):
         post_var1 = args['']
         post_var2 = args['']
         return 'Hello : ' + post_var1 + post_var2 + id
+"""
+
+
+
+
+
 """
 
 class Movement(db.Model):

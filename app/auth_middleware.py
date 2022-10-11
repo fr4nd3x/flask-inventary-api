@@ -20,7 +20,8 @@ def token_required(f):
             url = os.environ.get('OAUTH_URL')+'/api/me'
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic %s' % token #base64.b64encode('%s:%s' % (token,'sp')
+                'Authorization': 'Basic %s' % token 
+                #base64.b64encode('%s:%s' % (token,'sp')
             }
             print ("Bearer %s" % token)
             
