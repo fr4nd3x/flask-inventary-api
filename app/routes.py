@@ -11,6 +11,7 @@ import os
 import requests
 import base64
 
+
 # ROUTES
 # EndPoint 
 
@@ -166,7 +167,7 @@ def token_post():
         }
         response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
         o=json.loads(response.content)
-        return o['error']
+        return o
     except Exception as e:
         return jsonify(str(e))
 
