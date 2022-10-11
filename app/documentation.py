@@ -6,11 +6,8 @@ from app.graphQL import graphql_playground
 from flask import  request, Flask
 from app.models import db,relationship
 
-
-
 api = Api(app, version='2.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
-
 
 parser = reqparse.RequestParser()
 parser.add_argument('Full Name ', type=str, help='variable 1')
@@ -18,41 +15,31 @@ parser.add_argument('Company ', type=str, help='variable 2')
 
 @api.route('/in')
 class addData(Resource):
-    @api.doc(parser=parser)
     def post(self,id):
         args = parser.parse_args()
         post_var1 = args['fullName']
         post_var2 = args['company']
         return 'Hello : ' + post_var1 + post_var2 + id
 
-
-
-
-
 @api.route('/seed')
 class add(Resource):
     def get(self):
         return seed
 
-
-
 @api.route('/url')
 class url(Resource):
-    @api.doc(id='get_something')
     def get(self):
         return get_data
         
 
 @api.route('/graphql')
 class query(Resource):
-    @api.doc(id='get_something')
     def get(self):
         return graphql_playground
 
 
 @api.route('/moveID')
 class MyResource(Resource):
-    @api.doc(id='get_something')
     def get(self):
         return move_get
 
@@ -70,9 +57,6 @@ class HelloWorldParameter(Resource):
         post_var2 = args['']
         return 'Hello : ' + post_var1 + post_var2 + id
 """
-
-
-
 
 
 """
