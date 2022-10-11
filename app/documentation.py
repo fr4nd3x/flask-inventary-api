@@ -2,12 +2,19 @@ from flask import request,Blueprint
 from flask_restx import Api, Resource,reqparse
 from app import app 
 from app.routes import get_data,  move_get, seed
-from app.graphQL import graphql_playground
+from app.graphQL2 import graphql_server
 from flask import  request, Flask
 from app.models import db,relationship
 
+
 api = Api(app, version='2.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
+
+
+
+
+
+
 
 parser = reqparse.RequestParser()
 parser.add_argument('Full Name ', type=str, help='variable 1')
@@ -35,7 +42,7 @@ class url(Resource):
 @api.route('/graphql')
 class query(Resource):
     def get(self):
-        return graphql_playground
+        return graphql_server
 
 
 @api.route('/moveID')
@@ -99,18 +106,5 @@ class Movement(db.Model):
 
 
 
-app = Flask(__name__)
-api = Api(app)
-parser = reqparse.RequestParser()
-parser.add_argument('var1', type=str, help='variable 1')
-parser.add_argument('var2', type=str, help='variable 2')
-@api.route('/ids/<string:id>')
-class HelloWorldParameter(Resource):
-    @api.doc(parser=parser)
-    def get(self,id):
-        args = parser.parse_args()
-        post_var1 = args['var1']
-        post_var2 = args['var2']
-        return 'Hello : ' + post_var1 + post_var2 + id
 if __name__ == '__main__':
     app.run()
