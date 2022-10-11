@@ -2,7 +2,6 @@ from functools import wraps
 from flask import request
 import os
 import requests
-import base64
 import json
 def token_required(f):
     @wraps(f)

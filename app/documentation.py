@@ -13,10 +13,11 @@ api = Api(app, version='2.0', title='INVENTARY-API',
 
 
 parser = reqparse.RequestParser()
-parser.add_argument('var1', type=str, help='variable 1')
-parser.add_argument('var2', type=str, help='variable 2')
-@api.route('/in/<string:id>')
-class HelloWorldParameter(Resource):
+parser.add_argument('Full Name ', type=str, help='variable 1')
+parser.add_argument('Company ', type=str, help='variable 2')
+
+@api.route('/in')
+class addData(Resource):
     @api.doc(parser=parser)
     def post(self,id):
         args = parser.parse_args()
