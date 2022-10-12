@@ -148,7 +148,7 @@ def seed():
 # the JSON object
 # :return: <code>{
 #   "code": "4/AAB-wQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-@app.route('/token',methods=['POST'])    
+@app.route('/token',methods=['POST'])   
 def token_post():
     o=request.json
     try:    
@@ -170,8 +170,6 @@ def token_post():
         return o
     except Exception as e:
         return jsonify(str(e))
-
-
 
     
 # It takes a JSON object, creates a dictionary from it, and then creates a Movement object from the

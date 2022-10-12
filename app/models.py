@@ -23,8 +23,6 @@ def get_attrs(klass):
         except:
             print("get_attrs: An exception occurred with "+k)
     return fields
-    return [k for k in dir(klass)
-        if not callable(getattr(klass, k)) and not k.startswith('_') and not k.endswith('_') and k not in [ "move",'date_format', 'datetime_format', 'decimal_format','serializable_keys', 'serialize_only', 'serialize_rules', '_sa_instance_state','serialize_types', 'time_format', 'metadata', 'query', 'query_class','registry']]
 
 Base = declarative_base()
 
