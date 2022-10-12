@@ -1,8 +1,9 @@
 from functools import wraps
 from flask import request
-import os
+import os, traceback
 import requests
 import json
+
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -19,17 +20,16 @@ def token_required(f):
             url = os.environ.get('OAUTH_URL')+'/api/me'
             headers = {
                 'Content-Type': 'application/json',
-                'Authorization': 'Basic %s' % token 
-                #base64.b64encode('%s:%s' % (token,'sp')
+                'Authorization': 'Bearer %s' % token 
+
             }
-            print ("Bearer %s" % token)
             
             o = json.loads( requests.request("GET", url, headers=headers).content)
 
-            if o["error"]:
+            
+            if "error" in o:
                 return o,401
-            print (o) 
-            current_user =  {"uid" :1, "name" : "franc"} 
+            current_user =  {"uid" :o["id"], "name" : o['name']} 
             """if current_user is None:
                 return {
                 "message": "Invalid Authentication token!",
@@ -39,6 +39,7 @@ def token_required(f):
             if not current_user["active"]:
                 abort(403)"""
         except Exception as e:
+            traceback.print_exc()
             return {
                 "message": "Something went wrong",
                 "data": None,
@@ -51,18 +52,3 @@ def token_required(f):
     
 
 
-"""
-import hashlib
-import random
-def generate_token(length=12):
-#Genera un token único de 30 caracteres como máximo.
-chars = list(
-    'ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwyz01234567890'
-)
-random.shuffle(chars)
-chars = ''.join(chars)
-sha1 = hashlib.sha1(chars.encode('utf8'))
-token = sha1.hexdigest()
-return token[:length]
-
-"""

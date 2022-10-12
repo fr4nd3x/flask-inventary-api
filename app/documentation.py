@@ -11,11 +11,6 @@ api = Api(app, version='2.0', title='INVENTARY-API',
           description='Inventary API with flask and python.')
 
 
-
-
-
-
-
 parser = reqparse.RequestParser()
 parser.add_argument('Full Name ', type=str, help='variable 1')
 parser.add_argument('Company ', type=str, help='variable 2')
@@ -28,6 +23,32 @@ class addData(Resource):
         post_var2 = args['company']
         return 'Hello : ' + post_var1 + post_var2 + id
 
+parser = reqparse.RequestParser()
+parser.add_argument('Full Name ', type=str, help='variable 1')
+parser.add_argument('Company ', type=str, help='variable 2')
+
+@api.route('/graphQL')
+class addData(Resource):
+    def post(self,id):
+        args = parser.parse_args()
+        post_var1 = args['fullName']
+        post_var2 = args['company']
+        return 'Hello : ' + post_var1 + post_var2 + id
+
+
+@api.route('/ss')
+class query(Resource):
+    def get(self):
+        return graphql_server
+
+
+@api.route('/moveID')
+class MyResource(Resource):
+    def get(self):
+        return move_get
+
+
+
 @api.route('/seed')
 class add(Resource):
     def get(self):
@@ -38,17 +59,6 @@ class url(Resource):
     def get(self):
         return get_data
         
-
-@api.route('/graphql')
-class query(Resource):
-    def get(self):
-        return graphql_server
-
-
-@api.route('/moveID')
-class MyResource(Resource):
-    def get(self):
-        return move_get
 
 
 """

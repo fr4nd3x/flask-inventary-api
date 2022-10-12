@@ -2,5 +2,6 @@
 :: You must to put the letter "r".
 ::pipenv run flask --app app run
 ::pipenv run waitress-serve wsqi:app
-::SET FLASK_DEBUG=True
+
+SET FLASK_DEBUG=True
 pipenv run flask --app app run

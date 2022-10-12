@@ -57,6 +57,14 @@ class Movement(db.Model, SerializerMixin,Base):
     # :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
     @staticmethod
     def getList(offset,limit,args):
+        """
+        I'm trying to filter the query by the fullName parameter, but I'm getting an error
+        
+        :param offset: The offset of the first element to be returned
+        :param limit: 10
+        :param args: {'fullName': 'John'}
+        :return: A list of dictionaries
+        """
 
 
         offset=int(offset)
