@@ -1,38 +1,45 @@
 from re import A
+from tokenize import String
 from wsgiref.validate import WriteWrapper
-from flask import request,Blueprint 
-from flask_restx import Api, Resource,reqparse
+from flask import Flask, request,Blueprint 
+from flask_restx import Api, Resource, reqparse
 from app import app 
 from app.routes import get_data,  move_get, seed, in_post, token_post
 from app.graphQL import graphql_server
 from flask import  request
+import fields
 
 
-
-api = Api(app, version='2.0', title='INVENTARY-API', 
+api = Api(app, version='1.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
 
+app = Flask(__name__)
+
+    
+@api.route('/in/<id>', endpoint='in')
+@api.doc(params={"DNI":"dni", 
+                "Type":"type",
+                "Full Name":"fullName",
+                "Email":"email",
+                "Dependense":"dependence",
+                "Company":"company",
+                "Reference":"reference",
+                "Date":"date"})
+class MyResource(Resource):
+    def get(self, id):
+        return {}
+
+    @api.doc(responses={403: 'Not Authorized'})
+    def post(self, id):
+        api.abort(403)
 
 
 
 
-parser = reqparse.RequestParser()
-parser.add_argument('PageSize', type=int, location='args')
-parser.add_argument('Full Name ', type=str, help='variable 1')
-parser.add_argument('Company ', type=str, help='variable 2')
-
-@api.route('/in')
-class  addIn(Resource):
-    def post(self,id):
-        args = parser.parse_args()
-        var1 = args['fullName']
-        var2 = args['company']
-        return (in_post) +var1 +var2 
 
 @api.route('/token')
-class  tok(Resource):
+class tok(Resource):
     def postTok(self):
-
 
         return () 
 
@@ -53,7 +60,7 @@ class addData(Resource):
 class query(Resource):
     def get(self):
         
-        return ("This route not exist, only for test")
+       return ("This route not exist, only for test")
 
 
 @api.route('/moveID')

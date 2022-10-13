@@ -28,6 +28,7 @@ werkzeug = "*"
 restx-monkey = "*"
 json-rpc = "*"
 flask-restful = "*"
+fields = "*"
 
 [dev-packages]
 

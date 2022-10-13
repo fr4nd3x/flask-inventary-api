@@ -73,7 +73,8 @@ def move_put(user,ids):
 # :return: The return value of the function.
 @app.route('/<ids>',methods=['DELETE'])
 @token_required
-def move_delete(ids):
+def move_delete(user,ids):
+    print (user)
     for moveId in ids.split(','):
         moveId=int(moveId)
         movement = Movement.query.get(moveId)
@@ -99,7 +100,8 @@ def move_delete(ids):
 
 @app.route('/<moveId>/detail')
 @token_required
-def move_detail(moveId):
+def move_detail(user,moveId):
+    print(user)
     page=int(page)
     size=int(size)
     codePatrimonial = request.args.get("codePatrimonial")
@@ -225,7 +227,8 @@ def detail_post(user):
 # :return: The response is a PDF file.
 @app.route('/url',)
 @token_required
-def get_data(): 
+def get_data(user):
+    print (user) 
     temp = tempfile.TemporaryFile()
     """with open () as f :
         f.write (stuff)""" 
@@ -245,8 +248,8 @@ def get_data():
 # session, then dumps them into a dictionary
 # :param moveId: the id of the movement to be retrieved
 # :return: A dictionary with the movement and details.
-def _move_get(moveId):
-
+def _move_get(user,moveId):
+    print(user)
     try:
         int(moveId)
     except Exception as e:
