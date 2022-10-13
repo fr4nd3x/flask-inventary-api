@@ -124,7 +124,8 @@ def move_detail(moveId):
 # :return: A JSON object.
 @app.route('/seed',methods=['GET'])
 @token_required
-def seed():
+def seed(user):
+    print(user)
     for i in range(10):
         args={
             "fullName":"fullname-"+str(i),
@@ -177,7 +178,8 @@ def token_post():
 # :return: The object that was created.
 @app.route('/in',methods=['POST'])
 @token_required
-def in_post():
+def in_post(user):
+    print(user)
     o=request.json
     try:    
         values = {}
@@ -199,7 +201,8 @@ def in_post():
 # :return: The object that was created.
 @app.route('/detail',methods=["POST"])
 @token_required
-def detail_post():
+def detail_post(user):
+    print(user)
     o=request.json
     try:        
         values = {}
@@ -270,7 +273,8 @@ def _move_get(moveId):
 # :return: A JSON object with the moveId and the moveName.
 @app.route('/<moveId>')
 @token_required
-def move_get(moveId):
+def move_get(user,moveId):
+    print (user)
     m=_move_get(moveId)
     print(m)
     return jsonify(m)
@@ -281,6 +285,5 @@ def move_get(moveId):
 # If the user requests the favicon.ico file, send it from the static folder.
 # :return: The favicon.ico file is being returned.    
 @app.route('/favicon.ico') 
-@token_required
 def favicon(): 
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
