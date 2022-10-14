@@ -6,15 +6,14 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy import  ForeignKey
 from sqlalchemy import or_
 
+# It's creating an instance of the Marshmallow class.
 ma = Marshmallow(app)
 
-
 def get_attrs(klass):
-    
-    # It returns a list of all the attributes of the class.
-    # :param klass: The class you want to get the attributes of
-    # It returns a list of all the attributes of the class.
+    # It returns a list of all the attributes of a class.
+    # :param klass: The class you're trying to get the attributes from
     fields=[]
+    # It's returning a list of all the attributes of a class.
     for k in dir(klass):
         try:
             att=getattr(klass, k)
@@ -24,8 +23,8 @@ def get_attrs(klass):
             print("get_attrs: An exception occurred with "+k)
     return fields
 
+# It's creating a class that inherits from the object class.
 Base = declarative_base()
-
 
 # Movement is a class that inherits from db.Model, SerializerMixin, Base
 class Movement(db.Model, SerializerMixin,Base):
@@ -48,36 +47,23 @@ class Movement(db.Model, SerializerMixin,Base):
     _details = relationship("MoveDetail", back_populates="move")
     details= None
 
-
-    # A function that returns a list of movements.        
-    # :param offset: 0
-    # :param limit: 10
-    # :param args: {'fullName': '', 'offset': 0, 'limit': 10}    
+    # It's a decorator that is used to define a static method.
     @staticmethod
     def getList(offset,limit,args):
-        """
-        I'm trying to filter the query by the fullName parameter, but I'm getting an error
-        
-        :param offset: The offset of the first element to be returned
-        :param limit: 10
-        :param args: {'fullName': 'John'}
-        :return: A list of dictionaries
-        """
-
-
+        # A function that returns a list of movements.
+        # :param offset: 0
+        # :param limit: 10
+        # :param args: {'fullName': '', 'offset': '0', 'limit': '10'}
         offset=int(offset)
         limit=int(limit)
         fullName = args.get("fullName")
         query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
-
-        # I'm trying to filter the query by the fullName parameter, but I'm getting an error.
-        # :return: A list of dictionaries        
+        # It's returning a list of movements.
         if fullName:
             fullName = "%{}%".format(fullName)
             query=query.filter(Movement.fullName.like(fullName))
         size= query.count()
         movements = query.offset(offset).limit(limit).all()
-        
         result = movement_schema.dump(movements)
         return {
             'size':size,
@@ -85,7 +71,6 @@ class Movement(db.Model, SerializerMixin,Base):
         }
     def _repr_(self):
         return f'< Movement {self.id}>'
-
 
 # MoveDetail is a class that inherits from db.Model, SerializerMixin, and Base
 class MoveDetail (db.Model, SerializerMixin,Base):
@@ -102,26 +87,28 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     condition = db.Column(db.String(1))
     observation = db.Column(db.String(50))
     canceled = db.Column(db.Integer())
-    
     move = relationship("Movement",back_populates="_details")
     def _repr_(self):
         return {"id": self.id}
 
+# It's creating the tables in the database.
 with app.app_context():
     db.create_all()
     db.session.commit()
 
+# It's setting the fields attribute of the Meta class to the result of the get_attrs function.
 fields=get_attrs(Movement)
 
 
-# It's a class that inherits from ma.SQLAlchemyAutoSchema and has a Meta class that has a model
-# attribute that is set to Movement and a fields attribute that is set to the result of the get_attrs
-# function
+# The MoveSchema class inherits from the SQLAlchemyAutoSchema class, which is a class from the
+# Marshmallow-SQLAlchemy package. The SQLAlchemyAutoSchema class is a subclass of the Marshmallow
+# Schema class. The MoveSchema class is a subclass of the SQLAlchemyAutoSchema class
 class MoveSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Movement
         fields =get_attrs(Movement)
 
+# It's setting the fields attribute of the Meta class to the result of the get_attrs function.
 fields=get_attrs(MoveDetail)
 
 # The MoveDetailSchema class inherits from the SQLAlchemyAutoSchema class, which is a class that
@@ -131,6 +118,6 @@ class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
         model = MoveDetail
         fields =fields
         
+# It's creating an instance of the MoveSchema class.
 category_schema = MoveSchema()
 movement_schema = MoveSchema(many=True)
-

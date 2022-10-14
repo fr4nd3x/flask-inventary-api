@@ -14,9 +14,6 @@ f = """
       fullName: String
       dni: String
       type: String
-
-
-
 """
 f=""
 for f0 in fields:
@@ -42,21 +39,16 @@ type_defs = gql(
    """
 )
 
-
-
 # Initialize query
 query = QueryType()
-
 
 # Endpoint 
 # movements resolver (return movements )
 @query.field('movements')
 @token_required
-def movements(*_,offset=0,limit=50):
-   
+def movements(*_,offset=0,limit=50):   
    print(request.args)
    return Movement.getList(offset,limit,request.args)
-
 
 #@query.field("movements") 
 # def movements(*_):moveDetailSchema(details)

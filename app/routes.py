@@ -12,13 +12,9 @@ import requests
 import base64
 
 
-# ROUTES
-# EndPoint 
-
-# It takes a user object and returns a json response with the data  
+# It takes a user object and an offset and limit, and returns a json response with the data  
 # :param o: The object to be serialized
-# :return: A response object
-   
+# :return: A response object.
 @app.route('/<offset>/<limit>')
 @app.route('/index')
 @token_required
@@ -29,7 +25,6 @@ def index(user,offset=0,limit=50):
     fullName = request.args.get("fullName")
     type = request.args.get("type")
     query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
-
     if fullName:
         fullName = "%{}%".format(fullName)
         query=query.filter(Movement.fullName.like(fullName))
@@ -44,7 +39,6 @@ def index(user,offset=0,limit=50):
         'data':result
     }
     return make_response(jsonify(data))
-
 def _json(o):
     response = make_response(
         jsonify(o)
@@ -52,20 +46,45 @@ def _json(o):
     response.headers["Content-Type"] = "application/json"
     return response
 
-#
 
+# It creates 10 movements and for each movement it creates 10 movement details
+# :param user: The user object that is returned by the token_required decorator
+# :return: A list of Movement objects.
+@app.route('/seed',methods=['GET'])
+@token_required
+def seed(user):
+    print(user)
+    for i in range(10):
+        args={
+            "fullName":"fullname-"+str(i),
+            "email" :"email-" +str(i),        
+        }
+        movement=Movement(**args)
+        db.session.add(movement)
+        db.session.commit()
+        for j in range(10):
+            args={
+                "moveId" :movement.id
+            }
+            movementDet=MoveDetail(**args)
+            db.session.add(movementDet)  
+    db.session.commit()
+    return jsonify(str(True))
+
+
+# A decorator that is used to define the route for the function.
+#If the user is authenticated, then merge the json object into the database and return a json object
+# with a value of 1   
+# :param user: the user object that is returned by the token_required decorator
+# :return: The return value of the decorated function.
 @app.route('/',methods=['PUT'])
 @token_required
 def move_put(user):
     o=request.json
     print (user)
-   # movement = Movement.query.get(o['id'])*/
-   # movement.add=1
-    
     db.session.merge(o)
     db.session.commit()
     return _json(1)
-#
 
 # It deletes the movement.
 # :param ids: The id of the movement to be deleted
@@ -86,17 +105,13 @@ def move_delete(user,ids):
         message.filter_by(db.session)
     if move_detail ():
         message.filter_by(move_detasil= move_detail)
-
     db.session.delete(move_detail)
     db.session.commit()
     return _json(1)
 
-
-
 # It returns a json with the size of the query and the data of the query.
 # :param moveId: the id of the movement
 # :return: A list of MoveDetail objects
-
 @app.route('/<moveId>/detail')
 @token_required
 def move_detail(user,moveId):
@@ -119,37 +134,12 @@ def move_detail(user,moveId):
     }
     return _json(data)
 
-
-
-# It creates 10 Movement objects and 10 MovementDetail objects for each Movement object
-# :return: A JSON object.
-@app.route('/seed',methods=['GET'])
-@token_required
-def seed(user):
-    print(user)
-    for i in range(10):
-        args={
-            "fullName":"fullname-"+str(i),
-            "email" :"email-" +str(i),
-        
-        }
-        movement=Movement(**args)
-        db.session.add(movement)
-        db.session.commit()
-        for j in range(10):
-            args={
-                "moveId" :movement.id
-            }
-            movementDet=MoveDetail(**args)
-            db.session.add(movementDet)  
-    db.session.commit()
-    return jsonify(str(True))
-
-
-# It takes a POST request with a JSON object in the body, and returns the value of the 'code' key in
-# the JSON object
-# :return: <code>{
-#   "code": "4/AAB-wQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+# It takes a POST request with a JSON object containing a code, and returns a JSON object containing
+# an access token
+# :return: {
+#   "error": "invalid_grant",
+#   "error_description": "Invalid authorization code: "
+# }
 @app.route('/token',methods=['POST'])   
 def token_post():
     o=request.json
@@ -160,17 +150,14 @@ def token_post():
             'Authorization': 'Basic {}'.format(
                 base64.b64encode(
                 '{username}:{password}'.format(
-                username='KJkKoTYmCGxnV2BPI1MtsLoT',
-                password='PkIaIeBjST85ByCa20skIBaWPviB4S1Pnie7qax4GDk6fbG9'
-
+                    username=os.environ.get('OAUTH_CLIENT_ID', ''),
+                    password=os.environ.get('OAUTH_CLIENT_SECRET', '')
                 ).encode()
                 ).decode()
             ),
         }
         response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
         o=json.loads(response.content)
-        # o['perms']=['admin']
-
         return o
     except Exception as e:
         return jsonify(str(e))
@@ -216,13 +203,12 @@ def detail_post(user):
         moveDetail=MoveDetail(**values)
         db.session.add(moveDetail)
         db.session.commit()
-        
         return _json(MoveSchema().dump(moveDetail))
     except Exception as e:
         return jsonify(str(e))
 
-# It takes a json file, sends it to the server, and returns a pdf file
-# :return: The response is a PDF file.
+# It takes a moveId, gets the movement and its details from the database, expunges them from the
+# session, dumps them into a dictionary, and returns the dictionary
 @app.route('/url',)
 @token_required
 def get_data(user):
@@ -239,13 +225,7 @@ def get_data(user):
     conten =  requests.post('http://web.regionancash.gob.pe/api/jreport/', 
         files={'file':data },
         data={'filename': 'data.json','template':'pad'}).content
-   
     return Response(conten, mimetype='application/pdf')
-
-# It takes a movement id, gets the movement and its details from the database, expunges them from the
-# session, then dumps them into a dictionary
-# :param moveId: the id of the movement to be retrieved
-# :return: A dictionary with the movement and details.
 def _move_get(moveId):
     try:
         int(moveId)
@@ -278,9 +258,6 @@ def move_get(user,moveId):
     m=_move_get(moveId)
     print(m)
     return jsonify(m)
-
-
-
 
 # If the user requests the favicon.ico file, send it from the static folder.
 # :return: The favicon.ico file is being returned.    
