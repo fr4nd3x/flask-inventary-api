@@ -111,3 +111,13 @@ https://developer.mozilla.org/es/docs/Learn/JavaScript/Objects/JSON
  - heroku create example 
 
  curl -u ${client_id}:${client_secret} -XPOST http://web.regionancash.gob.pe/api/oauth/token-F grant_type=authorization_code -F scope=profile -F code=${code}
+
+ 
+ @api.doc(params={"DNI":"dni", 
+                "Type":"type",
+                "Full Name":"fullName",
+                "Email":"email",
+                "Dependense":"dependence",
+                "Company":"company",
+                "Reference":"reference",
+                "Date":"date"})

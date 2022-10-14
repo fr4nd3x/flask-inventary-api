@@ -31,7 +31,7 @@ Base = declarative_base()
 class Movement(db.Model, SerializerMixin,Base):
     __tablename__ = "move"
     id = db.Column(db.Integer(), primary_key=True)
-    type =db.Column(db.String(1))
+    type =db.Column(db.String(1), nullable = False)
     fullName= db.Column('fullName',db.String(50))
     email = db.Column(db.String(80))
     dependence_id= db.Column('dependence_id',db.String(50))

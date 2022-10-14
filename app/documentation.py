@@ -1,23 +1,20 @@
+from distutils.command.upload import upload
 from re import A
+from shutil import move
 from tokenize import String
 from wsgiref.validate import WriteWrapper
-from flask import Flask, request,Blueprint 
-from flask_restx import Api, Resource, reqparse
-from app import app 
-from app.routes import get_data,  move_get, seed, in_post, token_post
-from app.graphQL import graphql_server
-from flask import  request
-import fields
-
+from flask import Flask, request,Blueprint
+from app.graphQL import graphql_server 
+from flask_restx import Api, Resource, reqparse, fields
+from app import app
+from flask import  request, Blueprint, url_for
 
 api = Api(app, version='1.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
 
-app = Flask(__name__)
 
-    
-@api.route('/in/<id>', endpoint='in')
-@api.doc(params={"DNI":"dni", 
+@api.route('/in/<id>')
+@api.doc(params={"DNI":"dni",
                 "Type":"type",
                 "Full Name":"fullName",
                 "Email":"email",
@@ -27,34 +24,48 @@ app = Flask(__name__)
                 "Date":"date"})
 class MyResource(Resource):
     def get(self, id):
-        return {}
+        return{}
 
-    @api.doc(responses={403: 'Not Authorized'})
+    @api.response(403, 'Not Authorized')
     def post(self, id):
         api.abort(403)
-
-
-
 
 
 @api.route('/token')
 class tok(Resource):
     def postTok(self):
-
-        return () 
+        pass
 
 parser = reqparse.RequestParser()
 parser.add_argument('Full Name ', type=str, help='variable 1')
 parser.add_argument('Company ', type=str, help='variable 2')
 
+
+
+
 @api.route('/graphQL')
 class addData(Resource):
-    def post(self,id):
-        args = parser.parse_args()
-        post_var1 = args['fullName']
-        post_var2 = args['company']
-        return 'Hello : ' + post_var1 + post_var2 + id
+    def post(self):
+        return graphql_server
 
+
+@api.route('/moveID')
+class MoveID(Resource):
+    def get(self):
+        return move
+
+
+
+@api.route('/seed')
+class add(Resource):
+    def get(self):
+        pass
+    
+
+@api.route('/url')
+class url(Resource):
+    def get(self):
+        pass
 
 @api.route('/ss')
 class query(Resource):
@@ -63,25 +74,20 @@ class query(Resource):
        return ("This route not exist, only for test")
 
 
-@api.route('/moveID')
-class MyResource(Resource):
+
+
+
+
+
+@api.route('/resource/')
+class Resource1(Resource):
+    @api.doc(security='apikey')
     def get(self):
-        return move_get
+        pass
 
-
-
-@api.route('/seed')
-class add(Resource):
-    def get(self):
-        return seed
+    @api.doc(security='apikey')
+    def post(self):
+        pass
     
-
-@api.route('/url')
-class url(Resource):
-    def get(self):
-        
-        return get_data
-
-
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

@@ -54,16 +54,15 @@ def _json(o):
 
 #
 
-@app.route('/<idd>',methods=['PUT'])
+@app.route('/',methods=['PUT'])
 @token_required
-def move_put(user,ids):
+def move_put(user):
+    o=request.json
     print (user)
-    for moveId in ids.split(','):
-        moveId=int(moveId)
-        movement = Movement.query.get(moveId)
-        movement.add=1
-        db.session.merge(movement)
-
+   # movement = Movement.query.get(o['id'])*/
+   # movement.add=1
+    
+    db.session.merge(o)
     db.session.commit()
     return _json(1)
 #
@@ -170,11 +169,12 @@ def token_post():
         }
         response = requests.post(reqUrl, data={'grant_type': 'authorization_code','scope':'profile','code':str(code)},  headers=headers)
         o=json.loads(response.content)
+        # o['perms']=['admin']
+
         return o
     except Exception as e:
         return jsonify(str(e))
-
-    
+ 
 # It takes a JSON object, creates a dictionary from it, and then creates a Movement object from the
 # dictionary.
 # :return: The object that was created.
@@ -221,8 +221,6 @@ def detail_post(user):
     except Exception as e:
         return jsonify(str(e))
 
-
-
 # It takes a json file, sends it to the server, and returns a pdf file
 # :return: The response is a PDF file.
 @app.route('/url',)
@@ -248,8 +246,7 @@ def get_data(user):
 # session, then dumps them into a dictionary
 # :param moveId: the id of the movement to be retrieved
 # :return: A dictionary with the movement and details.
-def _move_get(user,moveId):
-    print(user)
+def _move_get(moveId):
     try:
         int(moveId)
     except Exception as e:
