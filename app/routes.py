@@ -279,15 +279,17 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-
-
-@app.route('/details/<offset>/<limit>',methods=["GET"])
+# A decorator that is used to define the route for the function.
+# It takes a user, prints the user, queries the database for all MoveDetails, counts the number of
+# MoveDetails, creates a MoveDetailSchema, dumps the MoveDetails into the MoveDetailSchema, creates a
+# dictionary with the size and the MoveDetailSchema, and returns a response with the dictionary
+@app.route('/details/',methods=["GET"])
 @token_required
-def detail_get(user,offset=0,limit=20):
+def detail_get(user):
     print(user)
     query=MoveDetail.query.filter()
     size= query.count()
-    MoveDetails = query.offset(offset).limit(limit).all()
+    MoveDetails = query
     moveDetailSchema = MoveDetailSchema(many=True) 
     result = moveDetailSchema.dump(MoveDetails)
     data = {
@@ -295,11 +297,3 @@ def detail_get(user,offset=0,limit=20):
         'data':result
         }
     return make_response(jsonify(data))
-def _json(o):
-    response = make_response(
-        jsonify(o))
-    response.headers["Content-Type"] = "application/json"
-    return response
-def get_random_string(length):
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(length))
