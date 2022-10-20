@@ -5,15 +5,16 @@ from tokenize import String
 from wsgiref.validate import WriteWrapper
 from flask import Flask, request,Blueprint
 from app.graphQL import graphql_server 
-from flask_restx import Api, Resource, reqparse, fields
+from flask_restx import Api
 from app import app
 from flask import  request, Blueprint, url_for
+ 
 
 api = Api(app, version='1.0', title='INVENTARY-API', 
           description='Inventary API with flask and python.')
 
-
-@api.route('/in/<id>')
+"""
+@api.route('/in/<cadena:id>', endpoint='in')
 @api.doc(params={"DNI":"dni",
                 "Type":"type",
                 "Full Name":"fullName",
@@ -22,13 +23,16 @@ api = Api(app, version='1.0', title='INVENTARY-API',
                 "Company":"company",
                 "Reference":"reference",
                 "Date":"date"})
-class MyResource(Resource):
-    def get(self, id):
-        return{}
-
+class endIn(Resource):
+    def get(self,id):
+        return {}
+        
     @api.response(403, 'Not Authorized')
-    def post(self, id):
+    def post(self):
         api.abort(403)
+
+
+
 
 
 @api.route('/token')
@@ -52,25 +56,21 @@ class addData(Resource):
 @api.route('/moveID')
 class MoveID(Resource):
     def get(self):
-        return move
-
-
+        return 
 
 @api.route('/seed')
 class add(Resource):
     def get(self):
-        pass
-    
-
+        return 
+        
 @api.route('/url')
 class url(Resource):
     def get(self):
-        pass
+        return
 
-@api.route('/ss')
-class query(Resource):
+@api.route('/example')
+class MyExample(Resource):
     def get(self):
-        
        return ("This route not exist, only for test")
 
 
@@ -89,5 +89,9 @@ class Resource1(Resource):
     def post(self):
         pass
     
+
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()"""

@@ -1,3 +1,5 @@
+from turtle import register_shape
+from xml.dom.expatbuilder import DOCUMENT_NODE
 from flask_marshmallow import Marshmallow
 from app import app,db
 from sqlalchemy.orm import relationship
@@ -43,6 +45,18 @@ class Movement(db.Model, SerializerMixin,Base):
     canceled = db.Column(db.Integer())
     deleteDate = db.Column(db.DateTime())
     uid = db.Column(db.String(20))
+    adress= db.Column(db.String(20))
+    reason= db.Column(db.String(50))
+    document_authorization = db.Column(db.String(50))   
+    register_code = db.Column(db.String(20))
+
+    dni_destino= db.Column(db.Integer())
+    fullName_destino= db.Column(db.String(50))
+    email_destino = db.Column(db.String(50))
+    proveedor_destino= db.Column(db.String(50))
+    local_destino = db.Column(db.String(50))
+    adress_destino= db.Column(db.String(20))
+
 
     _details = relationship("MoveDetail", back_populates="move")
     details= None
@@ -87,7 +101,12 @@ class MoveDetail (db.Model, SerializerMixin,Base):
     condition = db.Column(db.String(1))
     observation = db.Column(db.String(50))
     canceled = db.Column(db.Integer())
+    num_lote= db.Column(db.String(50))
+    dimention= db.Column(db.String(50))
     move = relationship("Movement",back_populates="_details")
+    
+
+
     def _repr_(self):
         return {"id": self.id}
 

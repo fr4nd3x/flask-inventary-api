@@ -10,7 +10,7 @@ import tempfile
 import os 
 import requests
 import base64
-
+import random,string
 
 # It takes a user object and an offset and limit, and returns a json response with the data  
 # :param o: The object to be serialized
@@ -50,21 +50,33 @@ def _json(o):
 # It creates 10 movements and for each movement it creates 10 movement details
 # :param user: The user object that is returned by the token_required decorator
 # :return: A list of Movement objects.
+def get_random_string(length):
+    # choose from all lowercase letter
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
+
 @app.route('/seed',methods=['GET'])
 @token_required
 def seed(user):
+    
     print(user)
+    marks = ['Lenovo', 'hp', 'asus', 'mac']
+    conditions = ['R', 'M', 'B']
     for i in range(10):
         args={
             "fullName":"fullname-"+str(i),
-            "email" :"email-" +str(i),        
+            "email" :"email-" +str(i),
+            "type" : "I"     
         }
         movement=Movement(**args)
         db.session.add(movement)
         db.session.commit()
         for j in range(10):
             args={
-                "moveId" :movement.id
+                "moveId" :movement.id,
+                "marca":random.choice(marks),
+                "denomination":get_random_string(30),
+                "condition":random.choice(conditions)
             }
             movementDet=MoveDetail(**args)
             db.session.add(movementDet)  
@@ -235,16 +247,17 @@ def _move_get(moveId):
     moveId=int(moveId)
     print('moveId='+str(moveId))
     movement = Movement.query.get(moveId)
-    print('movement='+str(movement))
-    details=movement._details
-    db.session.expunge(movement)
-    for detail in details:
-        db.session.expunge(detail)
-    movementSchema = MoveSchema()   
-    movement=movementSchema.dump(movement)
-    moveDetailSchema = MoveDetailSchema(many=True) 
-    movement['details']=moveDetailSchema.dump(details)
-    print(movement)
+    if not movement==None:
+        print('movement='+str(movement))
+        details=movement._details
+        db.session.expunge(movement)
+        for detail in details:
+            db.session.expunge(detail)
+        movementSchema = MoveSchema()   
+        movement=movementSchema.dump(movement)
+        moveDetailSchema = MoveDetailSchema(many=True) 
+        movement['details']=moveDetailSchema.dump(details)
+        print(movement)
     return movement
 
 # It takes a moveId as a parameter, and returns a json object containing the moveId, the moveName, and
@@ -264,3 +277,29 @@ def move_get(user,moveId):
 @app.route('/favicon.ico') 
 def favicon(): 
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
+
+
+@app.route('/details/<offset>/<limit>',methods=["GET"])
+@token_required
+def detail_get(user,offset=0,limit=20):
+    print(user)
+    query=MoveDetail.query.filter()
+    size= query.count()
+    MoveDetails = query.offset(offset).limit(limit).all()
+    moveDetailSchema = MoveDetailSchema(many=True) 
+    result = moveDetailSchema.dump(MoveDetails)
+    data = {
+        'size':size,
+        'data':result
+        }
+    return make_response(jsonify(data))
+def _json(o):
+    response = make_response(
+        jsonify(o))
+    response.headers["Content-Type"] = "application/json"
+    return response
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
