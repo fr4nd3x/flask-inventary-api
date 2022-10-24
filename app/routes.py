@@ -299,7 +299,21 @@ def detail_get(user):
         }
     return make_response(jsonify(data))
 
+@app.route('/user/<document>',methods=["GET"])
+@token_required
+def user_get(user,document):
+    o=request.json
+    try:        
+        values = {'id':1,'document':document,'fullname':'Jorge','email':'a@mail.com'}
+        return values
+    except Exception as e:
+        return jsonify(str(e))
 
+
+
+
+
+"""
 @app.route('/user',methods=["POST"])
 @token_required
 def user_post(user):
@@ -318,6 +332,9 @@ def user_post(user):
         return _json(User().dump(users))
     except Exception as e:
         return jsonify(str(e))
+
+
+"""
 
 @app.route('/users/',methods=["GET"])
 @token_required
