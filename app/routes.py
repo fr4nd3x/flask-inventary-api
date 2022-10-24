@@ -1,3 +1,4 @@
+from xml.dom.minidom import Document
 from app import app,db
 from flask import request, jsonify,json
 from app.auth_middleware import token_required
@@ -326,20 +327,45 @@ def user_get(user,document):
         return jsonify(str(e))
 
 
-"""@app.route('/movemet/<dni>',methods=["GET"])
+@app.route('/movement/<id>',methods=["GET"])
 @token_required
-def user_get(user,dni):
+def movement_get(user,id):
+    print(user)
     try:        
-        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
-        query=query.filter(Movement.id.like(dni))
-        movements = query.offset(0).limit(1).all()
-        if len(movements)==0:
+        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  )) 
+        moves = query.offset(0).limit(1).all()
+        if len(moves)==0:
             return {}
-        movements=movements[0]
-        return {'document':movements.dni,'fullname':movements.fullName,'email': movements.email, 'type': movements.type,'reason':movements.reason, ' document_authorization':movements. document_authorization,
-                'dni_destino': movements.dni_destino,'fullName_destino':movements.fullName_destino, 'email_destino':movements.email_destino, 'proveedor_destino':movements.proveedor_destino,
-                'local_destino': movements.local_destino,'adress_destino': movements.adress_destino}
-    except Exception as e:
-        return jsonify(str(e))
-"""
+        moves=moves[0]
+        return {'dni':moves.dni,'fullname':moves.fullName,'email': moves.email, 'type': moves.type,'reason':moves.reason, ' document_authorization':moves. document_authorization,
+                'dni_destino': moves.dni_destino,'fullName_destino':moves.fullName_destino, 'email_destino':moves.email_destino, 'proveedor_destino':moves.proveedor_destino,
+                'local_destino': moves.local_destino,'adress_destino': moves.adress_destino,'id':moves.id}
+    except Exception as d:  
+        return jsonify(str(d))
 
+
+
+@app.route('/movementd/<offset>/<limit>',methods=["GET"])
+@token_required
+def movements_get(user, offset=0,limit=10):
+    offset = int(offset)
+    limit= int (limit)
+    if offset ==0 :        
+        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  )) 
+        size =query.count()
+        moves = query.offset(offset).limit(limit).all()
+        result = {'dni':moves.dni,'fullname':moves.fullName,'email': moves.email, 'type': moves.type,'reason':moves.reason, ' document_authorization':moves. document_authorization,
+                'dni_destino': moves.dni_destino,'fullName_destino':moves.fullName_destino, 'email_destino':moves.email_destino, 'proveedor_destino':moves.proveedor_destino,
+                'local_destino': moves.local_destino,'adress_destino': moves.adress_destino,'id':moves.id}
+        data = {
+            'size':size,
+            'data':result
+        }
+    return jsonify(str(data))
+
+
+@app.route('/details/traslate',methods=["GET"])
+def detailss_get():
+
+
+    return None
