@@ -86,32 +86,6 @@ class Movement(db.Model, SerializerMixin,Base):
     def _repr_(self):
         return f'< Movement {self.id}>'
 
-class User(db.Model, SerializerMixin,Base):
-    __tablename__ = "user"
-    id = db.Column(db.Integer(), primary_key=True)
-    dni = db.Column(db.Integer())
-    fullName= db.Column('fullName',db.String(50))
-    email = db.Column(db.String(80))
-    local = db.Column(db.String(80))
-    adress= db.Column(db.String(80))
-
-    @staticmethod
-    def getList(offset,limit,args):
-        offset=int(offset)
-        limit=int(limit)
-        fullName = args.get("fullName")
-        query=User.query.filter(or_(User.canceled == 0 , User.canceled == None  ))
-        if fullName:
-            fullName = "%{}%".format(fullName)
-            query=query.filter(User.fullName.like(fullName))
-        size= query.count()
-               
-        return {
-            'size':size,
-            'data':
-        }
-    def _repr_(self):
-        return f'< Movement {self.id}>'
 
 # MoveDetail is a class that inherits from db.Model, SerializerMixin, and Base
 class MoveDetail (db.Model, SerializerMixin,Base):
@@ -163,12 +137,12 @@ class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
         fields =fields
 
 
-fields=get_attrs(User)
+"""fields=get_attrs(User)
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
-        fields = get_attrs(User)
+        fields = get_attrs(User)"""
 
 # It's creating an instance of the MoveSchema class.
 category_schema = MoveSchema()
