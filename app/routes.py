@@ -25,9 +25,11 @@ def index(user,offset=0,limit=50):
     fullName = request.args.get("fullName")
     type = request.args.get("type")
     query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
-    if fullName:
+    if fullName and dni :
         fullName = "%{}%".format(fullName)
+        dni = "%{}%".format(dni)
         query=query.filter(Movement.fullName.like(fullName))
+        query=query.filter(Movement.dni.like(dni))
     if type:
         type = "%{}%".format(type)
         query=query.filter(Movement.type.like(type))
@@ -312,39 +314,14 @@ def user_get(user,document):
         query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
         query=query.filter(Movement.dni.like(document))
         movements = query.offset(0).limit(1).all()
+        if len(movements)==0:
+            return {}
         movements=movements[0]
-        values = {'document':movements.dni,'fullname':movements.fullName,'email': movements.email}
-
-        return values
+        return {'document':movements.dni,'fullname':movements.fullName,'email': movements.email}
     except Exception as e:
         return jsonify(str(e))
 
 
-
-
-
-"""
-@app.route('/user',methods=["POST"])
-@token_required
-def user_post(user):
-    print(user)
-    o=request.json
-    try:        
-        values = {}
-        for y in get_attrs(User):
-            try:
-                values[y]=o[y]
-            except KeyError:
-                print("Variable "+y+" is empty")
-        users=User(**values)
-        db.session.add(users)
-        db.session.commit()
-        return _json(User().dump(users))
-    except Exception as e:
-        return jsonify(str(e))
-
-
-"""
 
 @app.route('/users/',methods=["GET"])
 @token_required

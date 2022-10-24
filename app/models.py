@@ -137,6 +137,7 @@ class MoveDetailSchema(ma.SQLAlchemyAutoSchema):
         fields =fields
 
 
+
 """fields=get_attrs(User)
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
