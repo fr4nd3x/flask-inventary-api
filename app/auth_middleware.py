@@ -10,7 +10,7 @@ import json
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):# A decorate function
-        if 1==1:
+        if os.environ.get('TEST',0)==1:
             return f({'uid':1,'name':'test'}, *args, **kwargs)
         token = None
          # Checking if the request has an Authorization header. If it does, it splits the value of the header.
