@@ -326,7 +326,7 @@ def user_get(user,document):
         return jsonify(str(e))
 
 
-@app.route('/movemet/<dni>',methods=["GET"])
+"""@app.route('/movemet/<dni>',methods=["GET"])
 @token_required
 def user_get(user,dni):
     try:        
@@ -341,5 +341,5 @@ def user_get(user,dni):
                 'local_destino': movements.local_destino,'adress_destino': movements.adress_destino}
     except Exception as e:
         return jsonify(str(e))
-
+"""
 
