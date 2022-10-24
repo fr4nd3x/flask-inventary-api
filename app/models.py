@@ -97,24 +97,18 @@ class User(db.Model, SerializerMixin,Base):
 
     @staticmethod
     def getList(offset,limit,args):
-        # A function that returns a list of movements.
-        # :param offset: 0
-        # :param limit: 10
-        # :param args: {'fullName': '', 'offset': '0', 'limit': '10'}
         offset=int(offset)
         limit=int(limit)
         fullName = args.get("fullName")
         query=User.query.filter(or_(User.canceled == 0 , User.canceled == None  ))
-        # It's returning a list of movements.
         if fullName:
             fullName = "%{}%".format(fullName)
             query=query.filter(User.fullName.like(fullName))
         size= query.count()
-        users = query.offset(offset).limit(limit).all()
-        result = users_schema.dump(users)
+               
         return {
             'size':size,
-            'data':result
+            'data':
         }
     def _repr_(self):
         return f'< Movement {self.id}>'
@@ -175,9 +169,6 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         fields = get_attrs(User)
-
-
-
 
 # It's creating an instance of the MoveSchema class.
 category_schema = MoveSchema()

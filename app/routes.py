@@ -58,19 +58,25 @@ def get_random_string(length):
 @app.route('/seed',methods=['GET'])
 @token_required
 def seed(user):
-    
-    print(user)
     marks = ['Lenovo', 'hp', 'asus', 'mac']
     conditions = ['R', 'M', 'B']
+    peoples = []
+    for i in range(5):
+        peoples.append({
+            "dni":''.join(random.choices(string.digits,k=8)),
+            "fullName":get_random_string(30),
+            "email" :get_random_string(10)+'@mail.com',   
+        })
     for i in range(10):
+        people=random.choice(peoples)
         args={
-            "fullName":"fullname-"+str(i),
-            "email" :"email-" +str(i),
+            "dni":people["dni"],
+            "fullName":people["fullName"],
+            "email" :people["email"],
             "type" : "I"     
         }
         movement=Movement(**args)
         db.session.add(movement)
-        db.session.add(user)
         db.session.commit()
         for j in range(10):
             args={
@@ -302,9 +308,13 @@ def detail_get(user):
 @app.route('/user/<document>',methods=["GET"])
 @token_required
 def user_get(user,document):
-    o=request.json
     try:        
-        values = {'id':1,'document':document,'fullname':'Jorge','email':'a@mail.com'}
+        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
+        query=query.filter(Movement.dni.like(document))
+        movements = query.offset(0).limit(1).all()
+        movements=movements[0]
+        values = {'document':movements.dni,'fullname':movements.fullName,'email': movements.email}
+
         return values
     except Exception as e:
         return jsonify(str(e))
