@@ -70,6 +70,7 @@ def seed(user):
         }
         movement=Movement(**args)
         db.session.add(movement)
+        db.session.add(user)
         db.session.commit()
         for j in range(10):
             args={
@@ -292,6 +293,41 @@ def detail_get(user):
     MoveDetails = query
     moveDetailSchema = MoveDetailSchema(many=True) 
     result = moveDetailSchema.dump(MoveDetails)
+    data = {
+        'size':size,
+        'data':result
+        }
+    return make_response(jsonify(data))
+
+
+@app.route('/user',methods=["POST"])
+@token_required
+def user_post(user):
+    print(user)
+    o=request.json
+    try:        
+        values = {}
+        for y in get_attrs(User):
+            try:
+                values[y]=o[y]
+            except KeyError:
+                print("Variable "+y+" is empty")
+        users=User(**values)
+        db.session.add(users)
+        db.session.commit()
+        return _json(User().dump(users))
+    except Exception as e:
+        return jsonify(str(e))
+
+@app.route('/users/',methods=["GET"])
+@token_required
+def users(user):
+    print(user)
+    query=User.query.filter()
+    size= query.count()
+    User = query
+    moveDetailSchema = MoveDetailSchema(many=True) 
+    result = moveDetailSchema.dump(User)
     data = {
         'size':size,
         'data':result
