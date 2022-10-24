@@ -292,13 +292,16 @@ def favicon():
 # It takes a user, prints the user, queries the database for all MoveDetails, counts the number of
 # MoveDetails, creates a MoveDetailSchema, dumps the MoveDetails into the MoveDetailSchema, creates a
 # dictionary with the size and the MoveDetailSchema, and returns a response with the dictionary
-@app.route('/details/',methods=["GET"])
+@app.route('/details/<offset>/<limit>',methods=["GET"])
 @token_required
-def detail_get(user):
+def detail_get(user,offset=0,limit=10):
     print(user)
+    offset=int(offset)
+    limit=int(limit)
     query=MoveDetail.query.filter()
     size= query.count()
-    MoveDetails = query
+    MoveDetails = query.offset(offset).limit(limit).all()
+
     moveDetailSchema = MoveDetailSchema(many=True) 
     result = moveDetailSchema.dump(MoveDetails)
     data = {
@@ -306,6 +309,7 @@ def detail_get(user):
         'data':result
         }
     return make_response(jsonify(data))
+
 
 @app.route('/user/<document>',methods=["GET"])
 @token_required
@@ -322,18 +326,20 @@ def user_get(user,document):
         return jsonify(str(e))
 
 
-
-@app.route('/users/',methods=["GET"])
+@app.route('/movemet/<dni>',methods=["GET"])
 @token_required
-def users(user):
-    print(user)
-    query=User.query.filter()
-    size= query.count()
-    User = query
-    moveDetailSchema = MoveDetailSchema(many=True) 
-    result = moveDetailSchema.dump(User)
-    data = {
-        'size':size,
-        'data':result
-        }
-    return make_response(jsonify(data))
+def user_get(user,dni):
+    try:        
+        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  ))
+        query=query.filter(Movement.id.like(dni))
+        movements = query.offset(0).limit(1).all()
+        if len(movements)==0:
+            return {}
+        movements=movements[0]
+        return {'document':movements.dni,'fullname':movements.fullName,'email': movements.email, 'type': movements.type,'reason':movements.reason, ' document_authorization':movements. document_authorization,
+                'dni_destino': movements.dni_destino,'fullName_destino':movements.fullName_destino, 'email_destino':movements.email_destino, 'proveedor_destino':movements.proveedor_destino,
+                'local_destino': movements.local_destino,'adress_destino': movements.adress_destino}
+    except Exception as e:
+        return jsonify(str(e))
+
+
