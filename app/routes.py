@@ -16,7 +16,7 @@ import random,string
 # It takes a user object and an offset and limit, and returns a json response with the data  
 # :param o: The object to be serialized
 # :return: A response object.
-@app.route('//<offset>/<limit>')
+@app.route('/movement/<offset>/<limit>')
 @app.route('/index')
 @token_required
 def index(user,offset=0,limit=50):
@@ -274,11 +274,11 @@ def _move_get(moveId):
 # the moveDescription
 # :param moveId: The ID of the move to get
 # :return: A JSON object with the moveId and the moveName.
-@app.route('/<moveId>')
+@app.route('/movement/<id>',methods=["GET"])
 @token_required
-def move_get(user,moveId):
+def move_get(user,id):
     print (user)
-    m=_move_get(moveId)
+    m=_move_get(id)
     print(m)
     return jsonify(m)
 
@@ -327,46 +327,8 @@ def user_get(user,document):
         return jsonify(str(e))
 
 
-@app.route('/movement/<id>',methods=["GET"])
-@token_required
-def movement_get(user,id):
-    print(user)
-    try:        
-        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  )) 
-        moves = query.offset(0).limit(1).all()
-        if len(moves)==0:
-            return {}
-        moves=moves[0]
-        return {'dni':moves.dni,'fullname':moves.fullName,'email': moves.email, 'type': moves.type,'reason':moves.reason, ' document_authorization':moves. document_authorization,
-                'dni_destino': moves.dni_destino,'fullName_destino':moves.fullName_destino, 'email_destino':moves.email_destino, 'proveedor_destino':moves.proveedor_destino,
-                'local_destino': moves.local_destino,'adress_destino': moves.adress_destino,'id':moves.id}
-    except Exception as d:  
-        return jsonify(str(d))
-
-
-
-@app.route('/movementd/<offset>/<limit>',methods=["GET"])
-@token_required
-def movements_get(user, offset=0,limit=10):
-    offset = int(offset)
-    limit= int (limit)
-    try:        
-        query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  )) 
-        size =query.count()
-        moves = query.offset(offset).limit(limit).all()
-        result = {'dni':moves.dni,'fullname':moves.fullName,'email': moves.email, 'type': moves.type,'reason':moves.reason, ' document_authorization':moves. document_authorization,
-                'dni_destino': moves.dni_destino,'fullName_destino':moves.fullName_destino, 'email_destino':moves.email_destino, 'proveedor_destino':moves.proveedor_destino,
-                'local_destino': moves.local_destino,'adress_destino': moves.adress_destino,'id':moves.id}
-        data = {
-            'size':size,
-            'data':result
-        }
-    except Exception as data:
-        return jsonify(str(data))
-
-
 @app.route('/details/traslate',methods=["GET"])
 def detailss_get():
-
+    
 
     return None
