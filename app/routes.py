@@ -210,7 +210,7 @@ def in_post(user):
      
 # It takes a JSON object, creates a MoveDetail object, and adds it to the database.
 # :return: The object that was created.
-@app.route('/detail',methods=["POST"])
+@app.route('/inventary',methods=["POST"])
 @token_required
 def detail_post(user):
     print(user)
@@ -293,7 +293,7 @@ def favicon():
 # It takes a user, prints the user, queries the database for all MoveDetails, counts the number of
 # MoveDetails, creates a MoveDetailSchema, dumps the MoveDetails into the MoveDetailSchema, creates a
 # dictionary with the size and the MoveDetailSchema, and returns a response with the dictionary
-@app.route('/details/<offset>/<limit>',methods=["GET"])
+@app.route('/inventary/<offset>/<limit>',methods=["GET"])
 @token_required
 def detail_get(user,offset=0,limit=10):
     print(user)
@@ -328,9 +328,3 @@ def user_get(user,document):
 
 
 
-
-@app.route('/report',methods=["GET"])
-def report_get():
-    
-    
-    return None
