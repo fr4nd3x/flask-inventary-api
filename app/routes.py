@@ -327,8 +327,10 @@ def user_get(user,document):
         return jsonify(str(e))
 
 
-@app.route('/details/traslate',methods=["GET"])
-def detailss_get():
-    
 
+
+@app.route('/report',methods=["GET"])
+def report_get():
+    
+    
     return None
