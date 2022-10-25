@@ -16,7 +16,7 @@ import random,string
 # It takes a user object and an offset and limit, and returns a json response with the data  
 # :param o: The object to be serialized
 # :return: A response object.
-@app.route('/<offset>/<limit>')
+@app.route('//<offset>/<limit>')
 @app.route('/index')
 @token_required
 def index(user,offset=0,limit=50):
@@ -350,7 +350,7 @@ def movement_get(user,id):
 def movements_get(user, offset=0,limit=10):
     offset = int(offset)
     limit= int (limit)
-    if offset ==0 :        
+    try:        
         query=Movement.query.filter(or_(Movement.canceled == 0 , Movement.canceled == None  )) 
         size =query.count()
         moves = query.offset(offset).limit(limit).all()
@@ -361,7 +361,8 @@ def movements_get(user, offset=0,limit=10):
             'size':size,
             'data':result
         }
-    return jsonify(str(data))
+    except Exception as data:
+        return jsonify(str(data))
 
 
 @app.route('/details/traslate',methods=["GET"])

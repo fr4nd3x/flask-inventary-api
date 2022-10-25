@@ -45,7 +45,7 @@ class Movement(db.Model, SerializerMixin,Base):
     canceled = db.Column(db.Integer())
     deleteDate = db.Column(db.DateTime())
     uid = db.Column(db.String(20))
-    adress= db.Column(db.String(20))
+    address= db.Column(db.String(20))
     reason= db.Column(db.String(50))
     document_authorization = db.Column(db.String(50))   
     register_code = db.Column(db.String(20))
